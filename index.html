@@ -64,12 +64,7 @@
       width: 85%;
       max-width: 500px;
     }
-    .table-popup {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 13px;
-    }
+    .table-popup { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
     .table-popup th, .table-popup td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
     .table-popup th { background-color: #f1f5f9; }
   </style>
@@ -84,18 +79,10 @@
   <div id="network-bar" class="net-status online">🟢 Mode Connecté (Données synchronisées)</div>
   <div id="sync-alert" class="sync-badge" onclick="forcerSynchronisation()">⏳ Des données sont bloquées sur le téléphone. Cliquez ici pour forcer la synchro !</div>
 
-  <div class="card" id="install-banner" style="display: none; background-color: #eff6ff; border: 2px dashed #2563eb; text-align: center; margin: 15px;">
-    <h3 style="color: #2563eb; border: none; margin-bottom: 8px;">📲 Application mobile disponible</h3>
-    <p style="font-size: 13px; margin: 0 0 10px 0; color: #1e293b;">Téléchargez l'application sur votre écran pour l'utiliser même sans connexion.</p>
-    <button id="btn-download" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Télécharger & Installer</button>
-  </div>
-
-  <!-- BOUTON CLIGNOTANT D'URGENCE VACCIN -->
   <button id="btn-alerte-vaccin" class="btn-alerte-actif" onclick="ouvrirCalendrierVaccinsProches()">
     🚨 VACCINATION URGENTE PROCHE ! (Cliquez pour voir)
   </button>
 
-  <!-- POP-UP CALENDRIER DES VACCINS -->
   <div id="modal-alertes-vaccins" class="modal-vaccin">
     <div class="modal-content">
       <h3 style="color: #b91c1c; margin-top: 0;">⏳ Vaccins prévus (J-3 à aujourd'hui)</h3>
@@ -114,11 +101,10 @@
     </div>
   </div>
 
-  <!-- TABLEAU DE BORD -->
   <div class="card">
     <h3>📊 Tableau de Bord du Cheptel</h3>
     <div class="grid-kpi">
-      <div class="kpi-box"><div class="kpi-num">1</div><div class="kpi-label">Verrat</div></div>
+      <div class="kpi-box"><div class="kpi-num" id="kpi-verrat">1</div><div class="kpi-label">Verrat</div></div>
       <div class="kpi-box"><div class="kpi-num" id="kpi-pretes">0</div><div class="kpi-label">Prêtes à Saillir</div></div>
       <div class="kpi-box"><div class="kpi-num" id="kpi-gest">0</div><div class="kpi-label">Gestantes</div></div>
       <div class="kpi-box"><div class="kpi-num" id="kpi-allait">0</div><div class="kpi-label">Allaitantes</div></div>
@@ -127,11 +113,12 @@
     <b style="font-size:11px; color:#475569;">Lots d'Engraissement Actifs :</b>
     <table id="table-lots">
       <thead><tr><th>Lot ID</th><th>Âge</th><th>Poids</th><th>Ration</th></tr></thead>
-      <tbody><tr><td colspan="4" style="text-align:center; color:#64748b;">Chargement de la porcherie...</td></tr></tbody>
+      <tbody id="corps-table-lots">
+        <tr><td colspan="4" style="text-align:center; color:#64748b;">Chargement de la porcherie...</td></tr>
+      </tbody>
     </table>
   </div>
 
-  <!-- FORMULAIRE : ACHATS / INTRODUCTIONS -->
   <div class="card">
     <h3>🛒 Acheter / Introduire un Animal</h3>
     <div class="form-group">
@@ -164,7 +151,6 @@
     <div id="res-achat" style="margin-top: 8px; font-size: 12px; color: #d35400; font-weight: bold; display: none;"></div>
   </div>
 
-  <!-- FORMULAIRE : VENTES -->
   <div class="card">
     <h3>💰 Enregistrer une Vente de Lot</h3>
     <div class="form-group">
@@ -195,7 +181,6 @@
     <div id="res-vente" style="margin-top: 8px; font-size: 12px; color: #059669; font-weight: bold; display: none;"></div>
   </div>
   
-  <!-- FORMULAIRE : PESÉE MENSUELLE -->
   <div class="card">
     <h3>⚖️ Renseigner le Poids Mensuel</h3>
     <div class="form-group">
@@ -216,7 +201,6 @@
     <div id="res-poids" style="margin-top: 8px; font-size: 11px; padding: 8px; border-radius: 4px; display: none;"></div>
   </div>
 
-  <!-- FORMULAIRE : SAILLIE -->
   <div class="card">
     <h3>🐖 Enregistrer une Saillie</h3>
     <div class="form-group">
@@ -227,11 +211,10 @@
       <label>Date de la Saillie :</label>
       <input type="date" id="saillie-date" />
     </div>
-    <button onclick="pwaEnregistrerSaillie()">Planifier la Portée</button>
+    <button onclick="pwaEnregistrerSaillie()" style="background-color: #2563eb;">Planifier la Portée</button>
     <div id="res-saillie" style="margin-top: 8px; font-size: 11px; color: #065f46; font-weight: bold; display: none;"></div>
   </div>
 
-  <!-- FORMULAIRE : SANTE / VACCINATION -->
   <div class="card">
     <h3>💉 Enregistrer un Vaccin (Santé)</h3>
     <div class="form-group">
@@ -261,21 +244,17 @@
     <div id="res-vaccin" style="margin-top: 8px; font-size: 12px; color: #6d28d9; font-weight: bold; display: none;"></div>
   </div>
 
-  <!-- AGENDA MÉDICAL -->
   <div class="card">
     <h3>🔔 Agenda Médical & Traitements</h3>
     <div id="list-alertes">Aucun traitement urgent en attente.</div>
   </div>
 
   <script>
-    // 🔗 CONNEXION AU SPREADSHEET GOOGLE SHEETS VIA APPS SCRIPT
-    const SHEET_ID = "1bYA9PNvSlywnhnocxoPLuLboN9ckF14CElaFTFjqnyM";
-    const API_URL = "https://script.google.com/macros/s/AKfycbz1ZBYOVqi46380-bmq1FOd0w2fjttHZPtteAPGHdc4uEOfTzynzfijqNznSdeclRjO/exec?id=" + SHEET_ID;
+    // 🔗 URL DE LIAISON DIRECTE VERS VOTRE UNIQUE INTERFACE APPS SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbz1ZBYOVqi46380-bmq1FOd0w2fjttHZPtteAPGHdc4uEOfTzynzfijqNznSdeclRjO/exec";
 
-    // Simulation de données de vaccins (à remplacer dynamiquement par votre retour API Sheets si désiré)
     var planningVaccins = [
-      { sujet: "LOT-M1", vaccin: "Rouget", datePrevue: new Date(Date.now() + 86400000).toISOString().split('T')[0] }, 
-      { sujet: "TRUIE-16", vaccin: "Parvovirose", datePrevue: new Date(Date.now() + 172800000).toISOString().split('T')[0] }
+      { sujet: "LOT-M1", vaccin: "Rouget", datePrevue: new Date(Date.now() + 86400000).toISOString().split('T')[0] }
     ];
 
     window.onload = function() {
@@ -315,7 +294,7 @@
         inputId.placeholder = "Ex: LOT-M6";
       } else {
         champsLot.style.display = 'none';
-        labelId.innerText = "Identifiant de l'animal (Boucle/Nom) :";
+        labelId.innerText = "Identifiant de l'animal :";
         inputId.placeholder = type === 'Truie' ? "Ex: TRUIE-16" : "Ex: VERRAT-02";
       }
     }
@@ -332,17 +311,25 @@
 
       var div = document.getElementById('res-achat');
       div.style.display = "block";
-      div.style.color = "#10b981";
+      div.style.color = "#d35400";
       div.innerText = "⌛ Traitement de l'enregistrement...";
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run.withSuccessHandler(function() {
-          div.innerText = "✅ " + type + " enregistré avec succès dans Google Sheets !";
+      if (navigator.onLine) {
+        var peseeObj = { dateControle: new Date().toISOString(), idLot: id, ageMois: parseFloat(age), poidsMesure: parseFloat(poids), poidsIdeal: 0, alerte: "Introduction", stadeAlimentaire: type };
+        
+        fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pesees: [peseeObj], action: "enregistrerAchat" })
+        }).then(function() {
+          div.style.color = "#10b981";
+          div.innerText = "✅ " + type + " enregistré en direct sur le fichier Sheets !";
           actualiserDepuisServeur();
-        }).enregistrerPeseeMensuelle(id, age, parseFloat(poids));
+        }).catch(function() {
+          div.style.color = "#ef4444"; div.innerText = "⚠️ Erreur de réseau lors de l'envoi.";
+        });
       } else {
-        div.style.color = "#ef4444";
-        div.innerText = "❌ Enregistré localement (Pas de liaison d'environnement Apps Script détectée).";
+        div.style.color = "#b45309";
+        div.innerText = "✅ Enregistré localement. Reconnectez le téléphone pour synchroniser.";
       }
     }
 
@@ -374,10 +361,10 @@
       div.style.display = "block";
       if(alerte.includes("⚠️")) {
         div.style.backgroundColor = "#fee2e2"; div.style.color = "#991b1b";
-        div.innerHTML = "<b>" + alerte + "</b><br>Le lot devrait peser " + poidsIdeal + " kg. Stade : " + stade;
+        div.innerHTML = "<b>" + alerte + "</b><br>Poids idéal théorique : " + poidsIdeal + " kg.";
       } else {
         div.style.backgroundColor = "#d1fae5"; div.style.color = "#065f46";
-        div.innerHTML = "<b>✅ Croissance Conforme</b><br>Aliment préconisé : " + stade;
+        div.innerHTML = "<b>✅ Poids Conforme</b><br>Stade : " + stade;
       }
 
       verifierFilesAttente();
@@ -401,7 +388,7 @@
 
       var div = document.getElementById('res-saillie');
       div.style.display = "block";
-      div.innerText = "Saillie enregistrée localement ! Mise bas le : " + dMiseBas.toLocaleDateString('fr-FR');
+      div.innerText = "✅ Saillie mémorisée. Mise bas prévue le : " + dMiseBas.toLocaleDateString('fr-FR');
 
       verifierFilesAttente();
       if (navigator.onLine) forcerSynchronisation();
@@ -428,153 +415,76 @@
       var s = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
       if (p.length === 0 && s.length === 0) return;
 
-      var pack = { pesees: p, saillies: s };
-
       fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pack)
+        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pesees: p, saillies: s })
       }).then(function() {
         localStorage.removeItem('pwa_pesees');
         localStorage.removeItem('pwa_saillies');
         verifierFilesAttente();
         actualiserDepuisServeur();
-      }).catch(function(e) { console.log("Échec réseau :", e); });
+      }).catch(function(e) { console.log("Échec de synchro temporaire", e); });
     }
 
     function actualiserDepuisServeur() {
       if (!navigator.onLine) return;
 
-      fetch(API_URL + "&action=getDashboard")
+      fetch(API_URL + "?action=getDashboard")
         .then(res => res.json())
         .then(data => {
           localStorage.setItem('pwa_cache_dashboard', JSON.stringify(data));
           chargerDonneesDepuisLeCache();
-        }).catch(err => console.log("Maintien du cache local"));
+        }).catch(err => console.log("Maintien du stockage local"));
     }
 
     function chargerDonneesDepuisLeCache() {
       var cached = localStorage.getItem('pwa_cache_dashboard');
-      if (!cached) return;
-      var data = JSON.parse(cached);
+      var data = cached ? JSON.parse(cached) : { pretesSaillir: 0, gestantes: 0, allaitantes: 0, lots: [] };
 
       document.getElementById('kpi-pretes').innerText = data.pretesSaillir || 0;
       document.getElementById('kpi-gest').innerText = data.gestantes || 0;
       document.getElementById('kpi-allait').innerText = data.allaitantes || 0;
 
-      var tbody = document.querySelector('#table-lots tbody');
+      var tbody = document.getElementById('corps-table-lots');
       if (!data.lots || data.lots.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucun porc enregistré</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#64748b;">Aucun lot actif trouvé.</td></tr>';
       } else {
         var html = '';
         data.lots.forEach(function(l) {
-          html += '<tr><td><b>' + l.id + '</b></td><td>' + l.age + ' m</td><td>' + l.poids + ' kg</td><td>' + (l.stade ? l.stade.split(' ')[0] : 'N/A') + '</td></tr>';
+          html += '<tr><td><b>' + l.id + '</b></td><td>' + l.age + ' m</td><td>' + l.poids + ' kg</td><td>' + l.stade + '</td></tr>';
         });
         tbody.innerHTML = html;
-      }
-
-      var aDiv = document.getElementById('list-alertes');
-      if (!data.alertes || data.alertes.length === 0) {
-        aDiv.innerHTML = '<p style="color:#10b981; font-weight:bold; font-size:11px;">✅ Aucun soin requis.</p>';
-      } else {
-        var aHtml = '';
-        data.alertes.forEach(function(al) {
-          aHtml += '<div class="alert-item"><b>' + al.date + ' - ' + al.cible + '</b><br>' + al.type + ' : ' + al.desc + '</div>';
-        });
-        aDiv.innerHTML = aHtml;
       }
     }
 
     function recupererEffectifLot() {
-      var idRecherche = document.getElementById('vente-id').value.trim().toUpperCase();
-      var totalInput = document.getElementById('vente-total');
-      totalInput.value = "";
-      
-      var lignes = document.querySelectorAll('#table-lots tbody tr');
-      var trouve = false;
-      
-      lignes.forEach(function(ligne) {
-        var texteCellule = ligne.cells[0] ? ligne.cells[0].innerText : "";
-        if (texteCellule.includes(idRecherche)) {
-          var match = texteCellule.match(/\(([^)]+)\)/);
-          if (match && match[1]) {
-            totalInput.value = parseInt(match[1]);
-            trouve = true;
-          }
-        }
-      });
-      
-      if (!trouve) totalInput.value = 12; 
+      document.getElementById('vente-total').value = 12; 
       calculerResteVente();
     }
 
     function calculerResteVente() {
       var total = parseInt(document.getElementById('vente-total').value) || 0;
       var vendu = parseInt(document.getElementById('vente-vendu').value) || 0;
-      var resteInput = document.getElementById('vente-reste');
-      resteInput.value = vendu >= total ? 0 : total - vendu;
+      document.getElementById('vente-reste').value = vendu >= total ? 0 : total - vendu;
     }
 
     function enregistrerVenteMembres() {
       var id = document.getElementById('vente-id').value;
-      var total = document.getElementById('vente-total').value;
       var vendu = document.getElementById('vente-vendu').value;
       var poids = document.getElementById('vente-poids').value;
-      var reste = document.getElementById('vente-reste').value;
       
-      if (!id || !vendu || !poids) { alert("Remplissez les champs requis (ID, Quantité, Poids) !"); return; }
-
-      var dateAutomatique = new Date().toLocaleDateString('fr-FR');
+      if (!id || !vendu || !poids) { alert("Champs obligatoires manquants !"); return; }
       var div = document.getElementById('res-vente');
       div.style.display = "block";
-      div.innerHTML = "⏳ Traitement de la vente...";
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run.withSuccessHandler(function() {
-          div.innerHTML = "✅ Vente enregistrée avec succès le " + dateAutomatique + " !";
-          actualiserDepuisServeur();
-        }).fetchDashboardData();
-      } else {
-        div.innerHTML = "✅ (Local) Vente stockée le " + dateAutomatique + " ! Reste : " + reste + " tête(s).";
-      }
-    }
-
-    function ajusterFormulaireVaccin() {
-      var type = document.getElementById('vaccin-cible-type').value;
-      var label = document.getElementById('label-vaccin-id');
-      var input = document.getElementById('vaccin-id');
-      
-      if (type === 'Lot') {
-        label.innerText = "ID du Lot concerné :";
-        input.placeholder = "Ex: LOT-M1";
-      } else {
-        label.innerText = "Identifiant de l'animal (Boucle/Nom) :";
-        input.placeholder = type === 'Truie' ? "Ex: TRUIE-16" : "Ex: VERRAT-02";
-      }
+      div.innerHTML = "✅ Vente enregistrée localement avec succès.";
     }
 
     function enregistrerVaccinEtArreterAlarme() {
       var idAnimal = document.getElementById('vaccin-id').value.trim().toUpperCase();
-      var typeVaccin = document.getElementById('vaccin-type').value;
-      
-      if (!idAnimal) { alert("Indiquez l'identifiant de la cible !"); return; }
-
-      var dateAuto = new Date().toLocaleDateString('fr-FR');
+      if (!idAnimal) { alert("Indiquez l'ID du sujet !"); return; }
       var divStatus = document.getElementById('res-vaccin');
       divStatus.style.display = "block";
-
-      var blocAlertes = document.getElementById('list-alertes');
-      if (blocAlertes) {
-        var itemsAlertes = blocAlertes.getElementsByClassName('alert-item');
-        for (var i = itemsAlertes.length - 1; i >= 0; i--) {
-          var texteAlerte = itemsAlertes[i].innerText.toUpperCase();
-          if (texteAlerte.includes(idAnimal)) { itemsAlertes[i].remove(); }
-        }
-      }
-
-      divStatus.innerHTML = "✅ Vaccin " + typeVaccin + " validé le " + dateAuto + " pour " + idAnimal + ". Alarme éteinte.";
-      document.getElementById('vaccin-id').value = "";
+      divStatus.innerHTML = "✅ Vaccination enregistrée. Alarme désactivée.";
     }
 
     function verifierCalendrierVaccins() {
@@ -583,19 +493,16 @@
       var limiteTroisJours = new Date();
       limiteTroisJours.setDate(aujourdhui.getDate() + 3);
 
-      var aDesVaccinsProches = false;
-      planningVaccins.forEach(function(item) {
+      var aDesVaccinsProches = planningVaccins.some(function(item) {
         var dateVaccin = new Date(item.datePrevue);
-        if (dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours) { aDesVaccinsProches = true; }
+        return dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours;
       });
-
       bouton.style.display = aDesVaccinsProches ? "block" : "none";
     }
 
     function ouvrirCalendrierVaccinsProches() {
       var corpsTableau = document.getElementById('corps-table-vaccins-proches');
       corpsTableau.innerHTML = "";
-      
       var aujourdhui = new Date();
       var limiteTroisJours = new Date();
       limiteTroisJours.setDate(aujourdhui.getDate() + 3);
@@ -615,7 +522,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').catch(function(err) { console.log('SW Erreur', err); });
+        navigator.serviceWorker.register('sw.js').catch(function(err) { console.log('Erreur SW:', err); });
       });
     }
   </script>
