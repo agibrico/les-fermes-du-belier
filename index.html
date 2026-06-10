@@ -45,6 +45,85 @@
   <p style="font-size: 13px; margin: 0 0 10px 0; color: #1e293b;">Téléchargez l'application sur votre écran pour l'utiliser même sans connexion.</p>
   <button id="btn-download" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Télécharger & Installer</button>
 </div>
+    <!-- STYLE CSS POUR LE CLIGNOTEMENT (À placer idéalement dans votre zone <style>) -->
+  <style>
+    @keyframes clignotement-alerte {
+      0% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { background-color: #b91c1c; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .btn-alerte-actif {
+      animation: clignotement-alerte 1.5s infinite;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: calc(100% - 30px);
+      margin: 15px;
+      display: none; /* Reste masqué s'il n'y a pas de vaccin proche */
+      text-align: center;
+      font-size: 14px;
+    }
+    /* Style de la fenêtre contextuelle (Modale) */
+    .modal-vaccin {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 500px;
+    }
+    .table-popup {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .table-popup th, .table-popup td {
+      border: 1px solid #cbd5e1;
+      padding: 8px;
+      text-align: left;
+    }
+    .table-popup th { background-color: #f1f5f9; }
+  </style>
+
+  <!-- LE BOUTON CLIGNOTANT -->
+  <button id="btn-alerte-vaccin" class="btn-alerte-actif" onclick="ouvrirCalendrierVaccinsProches()">
+    🚨 VACCINATION URGENTE PROCHE ! (Cliquez pour voir)
+  </button>
+
+  <!-- LA FENÊTRE POP-UP (MODALE) QUI S'OUVRE AU CLIC -->
+  <div id="modal-alertes-vaccins" class="modal-vaccin">
+    <div class="modal-content">
+      <h3 style="color: #b91c1c; margin-top: 0;">⏳ Vaccins prévus (J-3 à aujourd'hui)</h3>
+      <p style="font-size: 12px; color: #64748b;">Voici la liste des sujets ou lots dont la date de vaccination approche ou est arrivée :</p>
+      
+      <table class="table-popup">
+        <thead>
+          <tr>
+            <th>Sujet / Lot</th>
+            <th>Vaccin</th>
+            <th>Date Prévue</th>
+          </tr>
+        </thead>
+        <tbody id="corps-table-vaccins-proches">
+          <!-- Les lignes de vaccins proches s'inséreront ici automatiquement -->
+        </tbody>
+      </table>
+      
+      <button onclick="fermerModalVaccin()" style="margin-top: 15px; background-color: #64748b; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer;">Fermer la fenêtre</button>
+    </div>
+  </div>
+  
   <div class="card">
     <h3>📊 Tableau de Bord du Cheptel</h3>
     <div class="grid-kpi">
@@ -837,7 +916,80 @@ YPE html>
         document.getElementById('vaccin-id').value = "";
       }
     }
+         // Base de données temporaire des vaccins planifiés (Simulée ou issue de votre Google Sheets)
+    // Note : Vos scripts Sheets renverront idéalement ce format de données lors du refreshDashboard
+    var planningVaccins = [
+      { sujet: "LOT-M1", vaccin: "Rouget", datePrevue: "2026-06-11" }, 
+      { sujet: "TRUIE-16", vaccin: "Parvovirose", datePrevue: "2026-06-12" },
+      { sujet: "VERRAT-02", vaccin: "Peste Porcine", datePrevue: "2026-06-25" } // Trop loin, ne fera pas clignoter
+    ];
+
+    // VÉRIFICATION AUTOMATIQUE : Faut-il faire clignoter le bouton ? (Calcul J-3)
+    function verifierCalendrierVaccins() {
+      var bouton = document.getElementById('btn-alerte-vaccin');
+      var aujourdhui = new Date();
       
+      // Calcul du repère des 3 jours suivants
+      var limiteTroisJours = new Date();
+      limiteTroisJours.setDate(aujourdhui.getDate() + 3);
+
+      var aDesVaccinsProches = false;
+
+      planningVaccins.forEach(function(item) {
+        var dateVaccin = new Date(item.datePrevue);
+        
+        // Si le vaccin est planifié entre aujourd'hui et les 3 prochains jours
+        if (dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours) {
+          aDesVaccinsProches = true;
+        }
+      });
+
+      // Affichage dynamique du bouton clignotant
+      if (aDesVaccinsProches) {
+        bouton.style.display = "block";
+      } else {
+        bouton.style.display = "none";
+      }
+    }
+
+    // OUVERTURE DE LA FENÊTRE ET AFFICHAGE DES INFOS DEMANDÉES
+    function ouvrirCalendrierVaccinsProches() {
+      var corpsTableau = document.getElementById('corps-table-vaccins-proches');
+      corpsTableau.innerHTML = ""; // On nettoie l'ancien contenu
+      
+      var aujourdhui = new Date();
+      var limiteTroisJours = new Date();
+      limiteTroisJours.setDate(aujourdhui.getDate() + 3);
+
+      planningVaccins.forEach(function(item) {
+        var dateVaccin = new Date(item.datePrevue);
+        
+        if (dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours) {
+          var dateFormatee = dateVaccin.toLocaleDateString('fr-FR');
+          
+          var ligne = "<tr>" +
+            "<td><b>" + item.sujet + "</b></td>" +
+            "<td>" + item.vaccin + "</td>" +
+            "<td style='color: #b91c1c; font-weight: bold;'>" + dateFormatee + "</td>" +
+          "</tr>";
+          
+          corpsTableau.innerHTML += ligne;
+        }
+      });
+
+      // Affiche la fenêtre pop-up
+      document.getElementById('modal-alertes-vaccins').style.display = "block";
+    }
+
+    function fermerModalVaccin() {
+      document.getElementById('modal-alertes-vaccins').style.display = "none";
+    }
+
+    // Lancement automatique de la vérification au démarrage de l'application sur le téléphone
+    window.addEventListener('DOMContentLoaded', function() {
+      verifierCalendrierVaccins();
+    });
+            
     }
     if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
