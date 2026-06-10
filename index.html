@@ -40,6 +40,241 @@
 
   <div id="network-bar" class="net-status online">🟢 Mode Connecté (Données synchronisées)</div>
   <div id="sync-alert" class="sync-badge" onclick="forcerSynchronisation()">⏳ Des données sont bloquées sur le téléphone. Cliquez ici pour forcer la synchro !</div>
+<div class="card" id="install-banner" style="display: none; background-color: #eff6ff; border: 2px dashed #2563eb; text-align: center; margin: 15px;">
+  <h3 style="color: #2563eb; border: none; margin-bottom: 8px;">📲 Application mobile disponible</h3>
+  <p style="font-size: 13px; margin: 0 0 10px 0; color: #1e293b;">Téléchargez l'application sur votre écran pour l'utiliser même sans connexion.</p>
+  <button id="btn-download" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Télécharger & Installer</button>
+</div>
+  <div class="card">
+    <h3>📊 Tableau de Bord du Cheptel</h3>
+    <div class="grid-kpi">
+      <div class="kpi-box"><div class="kpi-num">1</div><div class="kpi-label">Verrat</div></div>
+      <div class="kpi-box"><div class="kpi-num" id="kpi-pretes">0</div><div class="kpi-label">Prêtes à Saillir</div></div>
+      <div class="kpi-box"><div class="kpi-num" id="kpi-gest">0</div><div class="kpi-label">Gestantes</div></div>
+      <div class="kpi-box"><div class="kpi-num" id="kpi-allait">0</div><div class="kpi-label">Allaitantes</div></div>
+    </div>
+    
+    <b style="font-size:11px; color:#475569;">Lots d'Engraissement Actifs :</b>
+    <table id="table-lots">
+      <thead><tr><th>Lot ID</th><th>Âge</th><th>Poids</th><th>Ration</th></tr></thead>
+      <tbody><tr><td colspan="4" style="text-align:center; color:#64748b;">Chargement de la porcherie...</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>⚖️ Renseigner le Poids Mensuel</h3>
+    <div class="form-group">
+      <label>ID du Lot (Ex: LOT-M1, LOT-NÉ-M6) :</label>
+      <input type="text" id="peso-id" placeholder="Ex: LOT-M2" />
+    </div>
+    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+      <div class="form-group">
+        <label>Âge (en mois) :</label>
+        <input type="number" id="peso-age" step="0.1" placeholder="Ex: 3" />
+      </div>
+      <div class="form-group">
+        <label>Poids Moyen (kg) :</label>
+        <input type="number" id="peso-val" step="0.5" placeholder="Ex: 65" />
+      </div>
+    </div>
+    <button onclick="pwaEnregistrerPesee()" style="background-color: #10b981;">💾 Valider la Pesée du Lot</button>
+    <div id="res-poids" style="margin-top: 8px; font-size: 11px; padding: 8px; border-radius: 4px; display: none;"></div>
+  </div>
+
+  <div class="card">
+    <h3>🐖 Enregistrer une Saillie</h3>
+    <div class="form-group">
+      <label>Identifiant de la Truie :</label>
+      <input type="text" id="saillie-id" placeholder="Ex: TRUIE_05" />
+    </div>
+    <div class="form-group">
+      <label>Date de la Saillie :</label>
+      <input type="date" id="saillie-date" />
+    </div>
+    <button onclick="pwaEnregistrerSaillie()">Planifier la Portée</button>
+    <div id="res-saillie" style="margin-top: 8px; font-size: 11px; color: #065f46; font-weight: bold; display: none;"></div>
+  </div>
+
+  <div class="card">
+    <h3>🔔 Agenda Médical & Traitements</h3>
+    <div id="list-alertes">Aucun traitement urgent en attente.</div>
+  </div>
+
+  <script>
+    // ⚠️ METTEZ VOTRE LIEN DE DÉPLOIEMENT APPS SCRIPT CI-DESSOUS
+    const API_URL = "https://script.google.com/macros/s/AKfycbz1ZBYOVqi46380-bmq1FOd0w2fjttHZPtteAPGHdc4uEOfTzynzfijqNznSdeclRjO/exec";
+
+    window.onload = function() {
+      configurerDetecteurReseau();
+      chargerDonneesDepuisLeCache();
+      verifierFilesAttente();
+      actualiserDepuisServeur();
+    };
+
+    function configurerDetecteurReseau() {
+      function modifierStatus() {
+        var bar = document.getElementById('network-bar');
+        if (navigator.onLine) {
+          bar.innerText = "🟢 Mode Connecté (Données synchronisées)";
+          bar.className = "net-status online";
+          forcerSynchronisation();
+        } else {
+          bar.innerText = "🔴 Mode Hors-Ligne (Données stockées dans le téléphone)";
+          bar.className = "net-status offline";
+        }
+      }
+      window.addEventListener('online', modifierStatus);
+      window.addEventListener('offline', modifierStatus);
+      modifierStatus();
+    }
+
+    // INTELLIGENCE EMBARQUÉE : Traitement instantané déconnecté du poids
+    function pwaEnregistrerPesee() {
+      var id = document.getElementById('peso-id').value;
+      var age = document.getElementById('peso-age').value;
+      var val = document.getElementById('peso-val').value;
+      if (!id || !age || !val) { alert("Champs vides !"); return; }
+
+      var ageNum = parseFloat(age);
+      var poidsNum = parseFloat(val);
+      var poidsIdeal = 10 + (ageNum * 20); // Base sevrage 10kg + 20kg de gain cible mensuel
+      var alerte = poidsNum < (poidsIdeal * 0.9) ? "⚠️ RETARD DE CROISSANCE" : "Normal";
+      
+      var stade = "Démarrage (10-25 kg)";
+      if (poidsNum > 25 && poidsNum <= 60) stade = "Croissance (25-60 kg)";
+      if (poidsNum > 60) stade = "Finition (60-100 kg)";
+
+      var peseeObj = {
+        dateControle: new Date().toISOString(), idLot: id, ageMois: ageNum,
+        poidsMesure: poidsNum, poidsIdeal: poidsIdeal, alerte: alerte, stadeAlimentaire: stade
+      };
+
+      // Stockage local immédiat
+      var localPesees = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
+      localPesees.push(peseeObj);
+      localStorage.setItem('pwa_pesees', JSON.stringify(localPesees));
+
+      // Rendu visuel instantané sur l'écran
+      var div = document.getElementById('res-poids');
+      div.style.display = "block";
+      if(alerte.includes("⚠️")) {
+        div.style.backgroundColor = "#fee2e2"; div.style.color = "#991b1b";
+        div.innerHTML = "<b>" + alerte + "</b><br>Le lot devrait peser " + poidsIdeal + " kg. Passer au stade : " + stade;
+      } else {
+        div.style.backgroundColor = "#d1fae5"; div.style.color = "#065f46";
+        div.innerHTML = "<b>✅ Croissance Conforme</b><br>Aliment préconisé : " + stade;
+      }
+
+      verifierFilesAttente();
+      if (navigator.onLine) forcerSynchronisation();
+    }
+
+    // INTELLIGENCE EMBARQUÉE : Gestion technique déconnectée des cycles de saillie
+    function pwaEnregistrerSaillie() {
+      var id = document.getElementById('saillie-id').value;
+      var dateStr = document.getElementById('saillie-date').value;
+      if (!id || !dateStr) { alert("Renseignez l'ID et la Date !"); return; }
+
+      var dSaillie = new Date(dateStr);
+      var dMiseBas = new Date(dSaillie.getTime() + (114 * 24 * 60 * 60 * 1000));
+      var dSevrage = new Date(dMiseBas.getTime() + (35 * 24 * 60 * 60 * 1000)); // Sevrage à 35j d'allaitement
+
+      var saillieObj = {
+        idTruie: id, dateSaillie: dSaillie.toISOString(),
+        dateMiseBas: dMiseBas.toISOString(), dateSevrage: dSevrage.toISOString()
+      };
+
+      var localSaillies = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
+      localSaillies.push(saillieObj);
+      localStorage.setItem('pwa_saillies', JSON.stringify(localSaillies));
+
+      var div = document.getElementById('res-saillie');
+      div.style.display = "block";
+      div.innerText = "Saillie enregistrée localement ! Mise bas prévue le : " + dMiseBas.toLocaleDateString('fr-FR');
+
+      verifierFilesAttente();
+      if (navigator.onLine) forcerSynchronisation();
+    }
+
+    function verifierFilesAttente() {
+      var p = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
+      var s = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
+      var total = p.length + s.length;
+      
+      var alertBox = document.getElementById('sync-alert');
+      if (total > 0) {
+        alertBox.style.display = "block";
+        alertBox.innerText = "⏳ " + total + " fiches en attente de synchronisation réseau. Appuyez pour pousser.";
+      } else {
+        alertBox.style.display = "none";
+      }
+    }
+
+    // TRANSMISSION ET SYNCHRONISATION DES FLUX VERS GOOGLE SHEETS
+    function forcerSynchronisation() {
+      if (!navigator.onLine || API_URL.includes("VOTRE_URL")) return;
+      
+      var p = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
+      var s = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
+      if (p.length === 0 && s.length === 0) return;
+
+      var pack = { pesees: p, saillies: s };
+
+      fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Évite le blocage Cross-Origin sur mobile
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pack)
+      }).then(function() {
+        // En mode no-cors, la réussite est présumée si aucune erreur n'est levée
+        localStorage.removeItem('pwa_pesees');
+YPE html>
+<html>
+<head>
+  <link rel="manifest" href="manifest.json?v=3">
+<link rel="apple-touch-icon" href="magnific_IaGWgT1tvE.png">
+<meta name="theme-color" content="#1e3a8a">
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Les Fermes du Bélier - PWA</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 10px; background-color: #f1f5f9; color: #1e293b; }
+    .header { background-color: #1e3a8a; color: white; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 10px; }
+    .net-status { padding: 6px; text-align: center; font-size: 11px; font-weight: bold; border-radius: 4px; margin-bottom: 10px; }
+    .online { background-color: #d1fae5; color: #065f46; }
+    .offline { background-color: #fee2e2; color: #991b1b; }
+    .card { background: white; padding: 14px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; }
+    h3 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 14px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 12px; color: #475569; }
+    input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    button { background-color: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; }
+    .grid-kpi { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
+    .kpi-box { background: #f8fafc; padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; }
+    .kpi-num { font-size: 16px; font-weight: bold; color: #1e3a8a; }
+    .kpi-label { font-size: 10px; color: #64748b; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
+    th, td { border: 1px solid #e2e8f0; padding: 6px; text-align: left; }
+    th { background-color: #f1f5f9; }
+    .alert-item { background-color: #fffbeb; border-left: 4px solid #d97706; padding: 6px; margin-bottom: 4px; font-size: 11px; border-radius: 4px; }
+    .sync-badge { background-color: #ef4444; color: white; padding: 4px; text-align: center; font-size: 11px; border-radius: 4px; font-weight: bold; margin-bottom: 10px; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="card" id="install-banner" style="display: none; background-color: #eff6ff; border: 2px dashed #2563eb; text-align: center; margin: 15px;">
+  <h3 style="color: #2563eb; border: none; margin-bottom: 8px;">📲 Application mobile disponible</h3>
+  <p style="font-size: 13px; margin: 0 0 10px 0; color: #1e293b;">Téléchargez l'application sur votre écran pour l'utiliser même sans connexion.</p>
+  <button id="btn-download" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Télécharger & Installer</button>
+    </div>
+    <b style="font-size: 18px;">LES FERMES DU BÉLIER</b><br>
+    <span style="font-size: 11px;">Système de Pilotage PWA Autonome</span>
+  </div>
+
+  <div id="network-bar" class="net-status online">🟢 Mode Connecté (Données synchronisées)</div>
+  <div id="sync-alert" class="sync-badge" onclick="forcerSynchronisation()">⏳ Des données sont bloquées sur le téléphone. Cliquez ici pour forcer la synchro !</div>
 
   <div class="card">
     <h3>📊 Tableau de Bord du Cheptel</h3>
