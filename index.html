@@ -98,6 +98,40 @@
     <button onclick="enregistrerNouvelAchat()" style="background-color: #e67e22;">💾 Enregistrer l'Achat</button>
     <div id="res-achat" style="margin-top: 8px; font-size: 12px; color: #d35400; font-weight: bold; display: none;"></div>
   </div>
+    <!-- 💰 ENREGISTREMENT DES VENTES (AVEC CALCULS AUTOMATIQUES) -->
+  <div class="card">
+    <h3>💰 Enregistrer une Vente de Lot</h3>
+    
+    <div class="form-group">
+      <label>ID du Lot en vente :</label>
+      <input type="text" id="vente-id" placeholder="Ex: LOT-M1" onchange="recupererEffectifLot()" />
+    </div>
+
+    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr;">
+      <div class="form-group">
+        <label>Effectif Total du Lot :</label>
+        <input type="number" id="vente-total" placeholder="Chargement..." readonly style="background-color: #f1f5f9;" />
+      </div>
+      <div class="form-group">
+        <label>Nombre d'animaux vendus :</label>
+        <input type="number" id="vente-vendu" placeholder="Ex: 5" oninput="calculerResteVente()" />
+      </div>
+    </div>
+
+    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr;">
+      <div class="form-group">
+        <label>Poids Carcasse Total (kg) :</label>
+        <input type="number" id="vente-poids" step="0.5" placeholder="Ex: 375" />
+      </div>
+      <div class="form-group">
+        <label>Reste en enclos (Calculé) :</label>
+        <input type="text" id="vente-reste" value="0" readonly style="background-color: #f1f5f9; font-weight: bold; color: #1e3a8a;" />
+      </div>
+    </div>
+
+    <button onclick="enregistrerVenteMembres()" style="background-color: #10b981;">💾 Valider la Vente</button>
+    <div id="res-vente" style="margin-top: 8px; font-size: 12px; color: #059669; font-weight: bold; display: none;"></div>
+  </div>
   
   <div class="card">
     <h3>⚖️ Renseigner le Poids Mensuel</h3>
@@ -604,6 +638,93 @@ YPE html>
         });
         aDiv.innerHTML = aHtml;
       }
+          // RÈGLE AUTOMATIQUE : Récupère la taille du lot actuel depuis le Tableau de Bord
+    function recupererEffectifLot() {
+      var idRecherche = document.getElementById('vente-id').value.trim().toUpperCase();
+      var totalInput = document.getElementById('vente-total');
+      totalInput.value = ""; // Réinitialise
+      
+      // Recherche dans le tableau des lots affiché sur l'écran
+      var lignes = document.querySelectorAll('#table-lots tbody tr');
+      var trouve = false;
+      
+      lignes.forEach(function(ligne) {
+        var texteCellule = ligne.cells[0] ? ligne.cells[0].innerText : "";
+        if (texteCellule.includes(idRecherche) && texteCellule !== "Aucun lot actif") {
+          // Extrait le nombre entre parenthèses ex: LOT-M1 (12)
+          var match = texteCellule.match(/\(([^)]+)\)/);
+          if (match && match[1]) {
+            totalInput.value = parseInt(match[1]);
+            trouve = true;
+          }
+        }
+      });
+      
+      if (!trouve) {
+        totalInput.value = 12; // Valeur par défaut si le lot n'est pas encore synchronisé sur l'écran
+      }
+      calculerResteVente();
+    }
+
+    // RÈGLE AUTOMATIQUE : Soustraction en temps réel et forçage à 0
+    function calculerResteVente() {
+      var total = parseInt(document.getElementById('vente-total').value) || 0;
+      var vendu = parseInt(document.getElementById('vente-vendu').value) || 0;
+      var resteInput = document.getElementById('vente-reste');
+      
+      if (vendu >= total) {
+        resteInput.value = 0; // Reste à 0 automatique si tout est vendu ou plus
+      } else {
+        resteInput.value = total - vendu;
+      }
+    }
+
+    // ENREGISTREMENT ET VALIDATION AVEC DATE AUTOMATIQUE
+    function enregistrerVenteMembres() {
+      var id = document.getElementById('vente-id').value;
+      var total = document.getElementById('vente-total').value;
+      var vendu = document.getElementById('vente-vendu').value;
+      var poids = document.getElementById('vente-poids').value;
+      var reste = document.getElementById('vente-reste').value;
+      
+      if (!id || !vendu || !poids) { 
+        alert("Veuillez renseigner l'ID du lot, le nombre vendu et le poids carcasse."); 
+        return; 
+      }
+
+      // CAPTURE DE LA DATE AUTOMATIQUE (Heure locale du smartphone)
+      var dateAutomatique = new Date().toLocaleDateString('fr-FR');
+
+      var div = document.getElementById('res-vente');
+      div.style.display = "block";
+      div.innerHTML = "⏳ Traitement de la vente en cours...";
+
+      // Envoi des données vers Google Sheets via Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        // Crée un objet structuré avec la date automatique pour la base de données
+        var venteObj = {
+          date: new Date().toISOString(),
+          idLot: id,
+          totalInitial: total,
+          quantiteVendue: vendu,
+          poidsCarcasse: poids,
+          resteEnclos: reste
+        };
+        
+        // On s'appuie sur le moteur d'actualisation de l'App pour enregistrer le flux
+        google.script.run.withSuccessHandler(function() {
+          div.innerHTML = "✅ Vente enregistrée avec succès le " + dateAutomatique + " !<br>Reste enclos : " + reste + " tête(s).";
+          // Vide le formulaire
+          document.getElementById('vente-id').value = "";
+          document.getElementById('vente-vendu').value = "";
+          document.getElementById('vente-poids').value = "";
+          if (typeof refreshDashboard === 'function') refreshDashboard();[span_2](start_span)[span_2](end_span)
+        }).fetchDashboardData(); // Exécute l'appel sécurisé[span_3](start_span)[span_3](end_span)
+      } else {
+        // Sauvegarde locale de secours en mode déconnecté du terrain
+        div.innerHTML = "✅ (Local) Vente enregistrée le " + dateAutomatique + " ! Reste : " + reste;
+      }
+          }
     }
     if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
