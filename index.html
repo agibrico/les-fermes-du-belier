@@ -182,6 +182,39 @@
       verifierFilesAttente();
       actualiserDepuisServeur();
     };
+      <div class="card">
+    <h3>💉 Enregistrer un Vaccin (Santé)</h3>
+    
+    <div class="form-group">
+      <label>Concerne :</label>
+      <select id="vaccin-cible-type" onchange="ajusterFormulaireVaccin()">
+        <option value="Lot">🐷 Un Lot de porcs</option>
+        <option value="Truie">🐖 Une Truie</option>
+        <option value="Verrat">🐗 Un Verrat</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label id="label-vaccin-id">ID du Lot concerné :</label>
+      <input type="text" id="vaccin-id" placeholder="Ex: LOT-M1" />
+    </div>
+
+    <div class="form-group">
+      <label>Type de Vaccin / Traitement :</label>
+      <select id="vaccin-type">
+        <option value="Peste Porcine">Peste Porcine Africaine (PPA)</option>
+        <option value="Rouget">Rouget</option>
+        <option value="Parvovirose">Parvovirose (Reproducteurs)</option>
+        <option value="Colibacillose">Colibacillose</option>
+        <option value="Anti-parasitaire">Anti-parasitaire / Vermifuge</option>
+        <option value="Fer">Injection de Fer (Porcelets)</option>
+      </select>
+    </div>
+
+    <button onclick="enregistrerVaccinEtArreterAlarme()" style="background-color: #8b5cf6;">💾 Valider la Vaccination</button>
+    <div id="res-vaccin" style="margin-top: 8px; font-size: 12px; color: #6d28d9; font-weight: bold; display: none;"></div>
+  </div>
+    
     // Gestion de l'affichage dynamique des champs selon le type d'animal choisi
     function ajusterFormulaireAchat() {
       var type = document.getElementById('achat-type').value;
@@ -725,6 +758,86 @@ YPE html>
         div.innerHTML = "✅ (Local) Vente enregistrée le " + dateAutomatique + " ! Reste : " + reste;
       }
           }
+          // Ajustement dynamique du texte d'aide du formulaire de vaccination
+    function ajusterFormulaireVaccin() {
+      var type = document.getElementById('vaccin-cible-type').value;
+      var label = document.getElementById('label-vaccin-id');
+      var input = document.getElementById('vaccin-id');
+      
+      if (type === 'Lot') {
+        label.innerText = "ID du Lot concerné :";
+        input.placeholder = "Ex: LOT-M1";
+      } else {
+        label.innerText = "Identifiant de l'animal (Boucle/Nom) :";
+        input.placeholder = type === 'Truie' ? "Ex: TRUIE-16" : "Ex: VERRAT-02";
+      }
+    }
+
+    // LOGIQUE DE VACCINATION AVEC EXTINCTION AUTOMATIQUE DE L'ALARME
+    function enregistrerVaccinEtArreterAlarme() {
+      var cibleType = document.getElementById('vaccin-cible-type').value;
+      var idAnimal = document.getElementById('vaccin-id').value.trim().toUpperCase();
+      var typeVaccin = document.getElementById('vaccin-type').value;
+      
+      if (!idAnimal) {
+        alert("Veuillez renseigner l'identifiant du lot ou de l'animal vacciné.");
+        return;
+      }
+
+      // CAPTURE DE LA DATE AUTOMATIQUE
+      var dateAuto = new Date().toLocaleDateString('fr-FR');
+      var divStatus = document.getElementById('res-vaccin');
+      divStatus.style.display = "block";
+      divStatus.innerHTML = "⏳ Enregistrement du soin...";
+
+      // --- EXTINCTION DE L'ALARME SUR L'ÉCRAN ---
+      var blocAlertes = document.getElementById('list-alertes');
+      if (blocAlertes) {
+        var itemsAlertes = blocAlertes.getElementsByClassName('alert-item');
+        var alarmeTrouvee EtEteinte = false;
+
+        // On parcourt les alertes visibles à l'écran à l'envers pour pouvoir les supprimer proprement
+        for (var i = itemsAlertes.length - 1; i >= 0; i--) {
+          var texteAlerte = itemsAlertes[i].innerText.toUpperCase();
+          
+          // On vérifie si l'alerte contient à la fois l'ID de l'animal et le nom du vaccin
+          if (texteAlerte.includes(idAnimal) && (texteAlerte.includes(typeVaccin.toUpperCase()) || texteAlerte.includes("VACCIN") || texteAlerte.includes("SOIN"))) {
+            itemsAlertes[i].remove(); // Supprime visuellement l'alarme de l'écran du téléphone
+            alarmeTrouveeEtEteinte = true;
+          }
+        }
+      }
+
+      // --- TRANSMISSION VERS GOOGLE SHEETS / STOCKAGE LOCAL ---
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        var vaccinObj = {
+          date: new Date().toISOString(),
+          typeCible: cibleType,
+          idTarget: idAnimal,
+          vaccinNom: typeVaccin
+        };
+
+        // Envoi vers le serveur
+        google.script.run.withSuccessHandler(function() {
+          var msg = "✅ Vaccin " + typeVaccin + " validé le " + dateAuto + " pour " + idAnimal + ".";
+          if (alarmeTrouveeEtEteinte) {
+            msg += "<br>🔔 L'alarme associée a été éteinte.";
+          }
+          divStatus.innerHTML = msg;
+          document.getElementById('vaccin-id').value = ""; // Vide la case
+          if (typeof refreshDashboard === 'function') refreshDashboard();
+        }).fetchDashboardData();
+      } else {
+        // Mode secours hors-ligne sur le terrain
+        var msgHorsLigne = "✅ (Local) Vaccin enregistré le " + dateAuto + " pour " + idAnimal + ".";
+        if (alarmeTrouveeEtEteinte) {
+          msgHorsLigne += "<br>🔔 Alerte retirée de l'écran.";
+        }
+        divStatus.innerHTML = msgHorsLigne;
+        document.getElementById('vaccin-id').value = "";
+      }
+    }
+      
     }
     if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
