@@ -44,6 +44,77 @@
   <p style="font-size: 13px; margin: 0 0 10px 0; color: #1e293b;">Téléchargez l'application sur votre écran pour l'utiliser même sans connexion.</p>
   <button id="btn-download" style="background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Télécharger & Installer</button>
 </div>
+    <!-- 🎯 COLOQUEZ LE CODE DU BOUTON CLIGNOTANT DIRECTEMENT ICI -->
+  <style>
+    @keyframes clignotement-alerte {
+      0% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { background-color: #b91c1c; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .btn-alerte-actif {
+      animation: clignotement-alerte 1.5s infinite;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: calc(100% - 30px);
+      margin: 15px;
+      display: none; /* Se mettra en 'block' via le script s'il y a une alerte */
+      text-align: center;
+      font-size: 14px;
+    }
+    .modal-vaccin {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 500px;
+    }
+    .table-popup {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .table-popup th, .table-popup td {
+      border: 1px solid #cbd5e1;
+      padding: 8px;
+      text-align: left;
+    }
+    .table-popup th { background-color: #f1f5f9; }
+  </style>
+
+  <button id="btn-alerte-vaccin" class="btn-alerte-actif" onclick="ouvrirCalendrierVaccinsProches()">
+    🚨 VACCINATION URGENTE PROCHE ! (Cliquez pour voir)
+  </button>
+
+  <div id="modal-alertes-vaccins" class="modal-vaccin">
+    <div class="modal-content">
+      <h3 style="color: #b91c1c; margin-top: 0;">⏳ Vaccins prévus (J-3 à aujourd'hui)</h3>
+      <p style="font-size: 12px; color: #64748b;">Sujets ou lots dont la date de vaccination approche :</p>
+      <table class="table-popup">
+        <thead>
+          <tr>
+            <th>Sujet / Lot</th>
+            <th>Vaccin</th>
+            <th>Date Prévue</th>
+          </tr>
+        </thead>
+        <tbody id="corps-table-vaccins-proches"></tbody>
+      </table>
+      <button onclick="fermerModalVaccin()" style="margin-top: 15px; background-color: #64748b; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer;">Fermer la fenêtre</button>
+    </div>
+  </div>
     <!-- STYLE CSS POUR LE CLIGNOTEMENT (À placer idéalement dans votre zone <style>) -->
   <style>
     @keyframes clignotement-alerte {
