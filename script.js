@@ -45,4 +45,19 @@ function connexionReussie(userRole) {
     localStorage.setItem('userRole', userRole); 
     window.location.href = "index.html"; // Redirection
 }
+  window.onload = function() {
+    const role = localStorage.getItem('userRole');
+    
+    // Si pas de rôle, renvoyer vers login
+    if (!role) { window.location.href = "login.html"; return; }
+
+    // Affichage conditionnel
+    if (role === 'PORCHER') {
+        document.getElementById('section-gestion').style.display = 'block';
+        // section-admin reste en display: none
+    } else if (role === 'ADMINISTRATEUR') {
+        document.getElementById('section-gestion').style.display = 'block';
+        document.getElementById('section-admin').style.display = 'block';
+    }
+};
 }
