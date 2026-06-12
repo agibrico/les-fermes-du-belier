@@ -96,6 +96,15 @@
     <button class="btn-accent" style="padding: 16px;" onclick="basculerPage('page-ajouter-compte')">👤 Ajouter Partenaire / Porcher</button>
     <button class="btn-nav" onclick="basculerPage('page-accueil')">Retour Accueil</button>
   </div>
+<!-- Section Gestion (Visible par Porcher + Admin) -->
+<div id="section-gestion" style="display: none;">
+    <button onclick="editerGestion()">Éditer Gestion</button>
+</div>
+
+<!-- Section Admin (Visible uniquement par Admin) -->
+<div id="section-admin" style="display: none;">
+    <button onclick="gererComptes()">Gérer les comptes</button>
+</div>
 
   <div id="page-ajouter-compte" class="page">
     <h3 style="margin-bottom:15px; text-align:center; color: var(--primary);">Création de Compte Élevage</h3>
