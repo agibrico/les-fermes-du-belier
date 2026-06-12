@@ -59,5 +59,33 @@ function connexionReussie(userRole) {
         document.getElementById('section-gestion').style.display = 'block';
         document.getElementById('section-admin').style.display = 'block';
     }
-};
+}
+  // Fonction pour gérer l'affichage dynamique selon le rôle
+window.addEventListener('load', function() {
+    // 1. On récupère le rôle stocké dans le navigateur
+    const userRole = localStorage.getItem('userRole');
+    
+    // 2. On cible les sections définies dans votre index.html
+    const sectionGestion = document.getElementById('section-gestion');
+    const sectionAdmin = document.getElementById('section-admin');
+
+    console.log("Rôle détecté :", userRole); // Utile pour déboguer si besoin
+
+    // 3. Logique d'affichage
+    if (userRole === 'PORCHER') {
+        // Le Porcher voit la Gestion mais PAS l'Admin
+        if (sectionGestion) sectionGestion.style.display = 'block';
+        if (sectionAdmin) sectionAdmin.style.display = 'none';
+    } 
+    else if (userRole === 'ADMINISTRATEUR') {
+        // L'Admin voit tout
+        if (sectionGestion) sectionGestion.style.display = 'block';
+        if (sectionAdmin) sectionAdmin.style.display = 'block';
+    } 
+    else {
+        // Sécurité : Si aucun rôle n'est trouvé, on renvoie vers la page de connexion
+        window.location.href = "login.html"; 
+    }
+});
+  
 }
