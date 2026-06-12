@@ -1732,6 +1732,27 @@
     const partenaireTx = document.getElementById("partenaire-tx-rentab");
     if(partenaireCA) { partenaireCA.textContent = "850 000 FCFA"; partenaireTx.textContent = "28 %"; partenaireTx.style.color = "#2e7d32"; }
   }
+  <script>
+  // ... vos autres fonctions ...
+
+  async function validerConnexion() {
+      // Récupération des valeurs depuis vos champs input HTML
+      const user = document.getElementById('user').value;
+      const pass = document.getElementById('pass').value;
+
+      // Appel vers le serveur Google Apps Script
+      // (Assurez-vous que cette fonction apiCall existe dans votre code)
+      const resultat = await apiCall('verifierConnexion', { user: user, pass: pass });
+
+      if (resultat.statut === "SUCCES") {
+          localStorage.setItem('userRole', resultat.role); 
+          localStorage.setItem('userId', resultat.id);
+          // Redirection ou affichage du Dashboard
+          window.location.href = "index.html"; 
+      } else {
+          alert("Erreur : " + resultat.message);
+      }
+  }
 </script>
       <script src="script.js"></script>
 </body>
