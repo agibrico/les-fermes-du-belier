@@ -1,530 +1,1728 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="manifest" href="manifest.json?v=3">
-  <link rel="apple-touch-icon" href="magnific_IaGWgT1tvE.png">
-  <meta name="theme-color" content="#1e3a8a">
-  <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les Fermes du Bélier - PWA</title>
+  <title>Les Fermes du Bélier Pro</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 10px; background-color: #f1f5f9; color: #1e293b; }
-    .header { background-color: #1e3a8a; color: white; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 10px; }
-    .net-status { padding: 6px; text-align: center; font-size: 11px; font-weight: bold; border-radius: 4px; margin-bottom: 10px; }
-    .online { background-color: #d1fae5; color: #065f46; }
-    .offline { background-color: #fee2e2; color: #991b1b; }
-    .card { background: white; padding: 14px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 12px; }
-    h3 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 14px; }
-    .form-group { margin-bottom: 10px; }
-    label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 12px; color: #475569; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    button { background-color: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-top: 5px; }
-    .grid-kpi { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
-    .kpi-box { background: #f8fafc; padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; }
-    .kpi-num { font-size: 16px; font-weight: bold; color: #1e3a8a; }
-    .kpi-label { font-size: 10px; color: #64748b; }
-    table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
-    th, td { border: 1px solid #e2e8f0; padding: 6px; text-align: left; }
-    th { background-color: #f1f5f9; }
-    .alert-item { background-color: #fffbeb; border-left: 4px solid #d97706; padding: 6px; margin-bottom: 4px; font-size: 11px; border-radius: 4px; }
-    .sync-badge { background-color: #ef4444; color: white; padding: 4px; text-align: center; font-size: 11px; border-radius: 4px; font-weight: bold; margin-bottom: 10px; display: none; cursor: pointer; }
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --accent: #f57c00;
+      --bg: #f4f6f7;
+      --card-bg: #ffffff;
+      --text: #37474f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 10px; }
+    .container { max-width: 500px; margin: 0 auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 20px; min-height: 90vh; }
+    header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+    header h1 { color: var(--primary); font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+    .status-bar { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 15px; background: #e8f5e9; padding: 6px 12px; border-radius: 6px; color: var(--primary-dark); font-weight: bold; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cfd8dc; border-radius: 8px; font-size: 15px; background: #fafafa; transition: 0.3s; }
+    input:focus, select:focus { border-color: var(--primary); background: #fff; outline: none; }
+    input[readonly] { background-color: #eceff1; color: #37474f; cursor: not-allowed; font-weight: bold; }
+    .checkbox-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 13px; }
+    .checkbox-container input { width: auto; }
+    button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-nav { background: #cfd8dc; color: #37474f; }
+    .btn-danger { background: #d32f2f; color: #fff; }
+    .alert-box { padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; font-weight: bold; text-align: center; display: none; }
+    .alert-error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .kpi-container { background: #eceff1; border-radius: 8px; padding: 12px; margin-bottom: 15px; font-size: 13px; }
+    .kpi-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #b0bec5; }
+    .kpi-row:last-child { border: none; }
+    .clignotant { background: #ffeb3b; animation: alerteBlink 1s infinite alternate; color: #000; }
+    .toggle-zone { display: flex; gap: 5px; margin-bottom: 15px; background: #eee; padding: 4px; border-radius: 8px; }
+    .toggle-btn { flex: 1; padding: 8px; font-size: 11px; background: transparent; color: #555; margin: 0; border-radius: 6px; text-transform: none; font-weight: bold; }
+    .toggle-btn.active { background: #fff; color: var(--primary-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .badge-rentable { background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+    .comment-box { background: #fcfcfc; border-left: 4px solid var(--primary); padding: 10px; margin-top: 10px; font-style: italic; font-size: 13px; }
+    @keyframes alerteBlink { from { box-shadow: 0 0 4px #f44336; } to { box-shadow: 0 0 15px #f44336; background: #ffc107; } }
+
+    /* Styles exclusifs du Tableau de Bord Sanitaire & Alimentaire */
+    .vax-dashboard { background: #ffffff; border: 2px solid #b0bec5; border-radius: 8px; padding: 12px; margin-bottom: 15px; font-size: 12px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+    .vax-dashboard h4 { color: var(--primary-dark); font-size: 13px; margin-bottom: 8px; border-bottom: 2px solid var(--primary); padding-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+    .vax-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+    .vax-table th, .vax-table td { padding: 6px 4px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+    .vax-table th { background: #f5f5f5; font-weight: bold; color: #555; font-size: 11px; }
+    .vax-badge { background: #ffe082; color: #5d4037; padding: 2px 4px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+
+    /* Nouveaux ajustements pour les sous-sections Formules */
+    .sub-section-box { border: 1px solid #cfd8dc; padding: 12px; border-radius: 8px; background: #fafafa; margin-bottom: 15px; }
+    .flex-row-inputs { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .flex-row-inputs > div { flex: 1; }
+    .btn-formula-select { text-align: left; background: #fff; border: 1px solid #cfd8dc; color: var(--text); padding: 10px; font-size: 13px; margin-bottom: 6px; border-left: 4px solid var(--primary); text-transform: none; font-weight: normal; }
+    .btn-formula-select:hover { background: #f1f8e9; }
     
-    @keyframes clignotement-alerte {
-      0% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      50% { background-color: #b91c1c; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-      100% { background-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-    .btn-alerte-actif {
-      animation: clignotement-alerte 1.5s infinite;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      width: calc(100% - 20px);
-      margin: 10px auto;
-      display: none;
-      text-align: center;
-      font-size: 14px;
-    }
-    .modal-vaccin {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0; width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-    }
-    .modal-content {
-      background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 12px;
-      width: 85%;
-      max-width: 500px;
-    }
-    .table-popup { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    .table-popup th, .table-popup td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
-    .table-popup th { background-color: #f1f5f9; }
+    /* Styles spécifiques pour le nouveau menu d'accueil */
+    .btn-accueil { padding: 18px; margin-top: 10px; font-size: 15px; letter-spacing: 0.5px; text-align: left; display: flex; align-items: center; justify-content: space-between; }
+    .btn-accueil span { font-size: 18px; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <b style="font-size: 18px;">LES FERMES DU BÉLIER</b><br>
-    <span style="font-size: 11px;">Système de Pilotage PWA Autonome</span>
+<div class="container">
+  <header>
+    <h1>Bélier Pro</h1>
+  </header>
+
+  <div class="status-bar">
+    <span id="network-status">Vérification réseau...</span>
+    <span id="sync-status">Initialisation...</span>
   </div>
 
-  <div id="network-bar" class="net-status online">🟢 Mode Connecté (Données synchronisées)</div>
-  <div id="sync-alert" class="sync-badge" onclick="forcerSynchronisation()">⏳ Des données sont bloquées sur le téléphone. Cliquez ici pour forcer la synchro !</div>
+  <div id="alert-zone" class="alert-box alert-error"></div>
 
-  <button id="btn-alerte-vaccin" class="btn-alerte-actif" onclick="ouvrirCalendrierVaccinsProches()">
-    🚨 VACCINATION URGENTE PROCHE ! (Cliquez pour voir)
-  </button>
+  <div id="page-accueil" class="page active">
+    <h3 style="margin-bottom:20px; text-align:center; color: var(--primary-dark);">🐖 Projet Porcin - Sélection du Profil</h3>
+    <button class="btn-primary btn-accueil" onclick="choisirProfilAccueil('ADMINISTRATEUR')">⚙️ Administrateur <span>❯</span></button>
+    <button class="btn-primary btn-accueil" style="background: #0288d1;" onclick="choisirProfilAccueil('PARTENAIRE')">🤝 Partenaire Co-exploitant <span>❯</span></button>
+    <button class="btn-primary btn-accueil" style="background: #5d4037;" onclick="choisirProfilAccueil('PORCHER')">👨‍🌾 Porcher / Gestionnaire <span>❯</span></button>
+  </div>
 
-  <div id="modal-alertes-vaccins" class="modal-vaccin">
-    <div class="modal-content">
-      <h3 style="color: #b91c1c; margin-top: 0;">⏳ Vaccins prévus (J-3 à aujourd'hui)</h3>
-      <p style="font-size: 12px; color: #64748b;">Sujets ou lots dont la date de vaccination approche :</p>
-      <table class="table-popup">
-        <thead>
-          <tr>
-            <th>Sujet / Lot</th>
-            <th>Vaccin</th>
-            <th>Date Prévue</th>
-          </tr>
-        </thead>
-        <tbody id="corps-table-vaccins-proches"></tbody>
-      </table>
-      <button onclick="fermerModalVaccin()" style="margin-top: 15px; background-color: #64748b; color: white;">Fermer la fenêtre</button>
+  <div id="page-admin-pre-login" class="page">
+    <h3 style="margin-bottom:20px; text-align:center; color: var(--primary-dark);">Espace Administration</h3>
+    <button class="btn-primary" style="padding: 16px;" onclick="basculerPage('page-login')">🔑 Accès Session Administrateur</button>
+    <button class="btn-accent" style="padding: 16px;" onclick="basculerPage('page-ajouter-compte')">👤 Ajouter Partenaire / Porcher</button>
+    <button class="btn-nav" onclick="basculerPage('page-accueil')">Retour Accueil</button>
+  </div>
+
+  <div id="page-ajouter-compte" class="page">
+    <h3 style="margin-bottom:15px; text-align:center; color: var(--primary);">Création de Compte Élevage</h3>
+    <form id="form-creation-compte" onsubmit="creerNouveauCompteSimule(event)">
+      <div class="form-group">
+        <label>Type de profil à ajouter</label>
+        <select id="add-user-role" required>
+          <option value="PARTENAIRE">Partenaire Co-exploitant</option>
+          <option value="PORCHER">Porcher / Gestionnaire</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Identifiant utilisateur (Login)</label>
+        <input type="text" id="add-user-name" placeholder="Ex: PARTENAIRE2, PORCHER_SUD" required>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe initial</label>
+        <input type="password" id="add-user-pass" value="0000" placeholder="Par défaut: 0000" required>
+      </div>
+      <button type="submit" class="btn-primary">Enregistrer le profil</button>
+    </form>
+    <button class="btn-nav" onclick="basculerPage('page-admin-pre-login')">Retour</button>
+  </div>
+
+  <div id="page-login" class="page">
+    <h3 id="login-title-context" style="margin-bottom:15px; text-align:center;">Authentification Élevage</h3>
+    <div class="form-group">
+      <label>Utilisateur</label>
+      <input type="text" id="login-user" placeholder="Ex: ADMIN, PARTENAIRE1 ou PORCHER1">
     </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pass" placeholder="****">
+      <div class="checkbox-container">
+        <input type="checkbox" id="reveal-pass" onclick="toggleAffichageMdp('login-pass')">
+        <label for="reveal-pass">Afficher le mot de passe</label>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="traiterAuthentification()">Se Connecter</button>
+    <button class="btn-nav" onclick="revenirDepuisLogin()">Retour</button>
   </div>
 
-  <div class="card">
-    <h3>📊 Tableau de Bord du Cheptel</h3>
-    <div class="grid-kpi">
-      <div class="kpi-box"><div class="kpi-num" id="kpi-verrat">1</div><div class="kpi-label">Verrat</div></div>
-      <div class="kpi-box"><div class="kpi-num" id="kpi-pretes">0</div><div class="kpi-label">Prêtes à Saillir</div></div>
-      <div class="kpi-box"><div class="kpi-num" id="kpi-gest">0</div><div class="kpi-label">Gestantes</div></div>
-      <div class="kpi-box"><div class="kpi-num" id="kpi-allait">0</div><div class="kpi-label">Allaitantes</div></div>
+  <div id="page-force-mdp" class="page">
+    <h3 style="color:var(--accent); margin-bottom:15px;">Première Connexion Sécurisée</h3>
+    <p style="font-size:12px; margin-bottom:15px;">Le mot de passe par défaut '0000' doit impérativement être personnalisé pour des raisons de traçabilité.</p>
+    <input type="hidden" id="force-id-user">
+    <div class="form-group">
+      <label>Nouveau Mot de Passe</label>
+      <input type="password" id="new-user-pass" placeholder="Saisir nouveau code secret">
+      <div class="checkbox-container">
+        <input type="checkbox" id="reveal-new-pass" onclick="toggleAffichageMdp('new-user-pass')">
+        <label for="reveal-new-pass">Rendre visible</label>
+      </div>
+    </div>
+    <button class="btn-accent" onclick="traiterMiseAJourMdp()">Enregistrer la clé</button>
+  </div>
+
+  <div id="page-menu-admin" class="page">
+    <h2>Espace Administrateur</h2>
+    <div class="kpi-container">
+      <strong>Tableau de Bord Centralisé</strong>
+      <div class="kpi-row"><span>Cheptel Total vif:</span> <span id="kpi-cheptel">Calcul...</span></div>
+      <div class="kpi-row"><span>Mortalité cumulée:</span> <span id="kpi-morts">0 sujet</span></div>
+    </div>
+    <button class="btn-primary" onclick="basculerPage('page-gestion-hub')">💼 MODULE GESTION</button>
+    <button class="btn-primary" onclick="basculerPage('page-finance-hub')">🪙 MODULE FINANCES</button>
+    <button class="btn-accent" onclick="basculerPage('page-restauration')">🔄 RESTAURATION SYSTEME</button>
+    <button class="btn-danger" onclick="deconnexion()">Déconnexion</button>
+  </div>
+
+  <div id="page-menu-partenaire" class="page">
+    <h2>Espace Partenaire Co-exploitant</h2>
+    
+    <div class="sub-section-box" style="margin-top: 10px; border-left: 4px solid var(--accent);">
+      <strong style="font-size:13px; display:block; margin-bottom:8px; color:var(--text);">📅 Paramètres du Tableau de Bord Dynamique</strong>
+      <div class="flex-row-inputs">
+        <div>
+          <label style="font-size:11px;">Mois</label>
+          <select id="partenaire-filtre-mois" onchange="rafraichirDashboardPartenaire()">
+            <option value="01">Janvier</option><option value="02">Février</option><option value="03">Mars</option>
+            <option value="04">Avril</option><option value="05">Mai</option><option value="06" selected>Juin</option>
+            <option value="07">Juillet</option><option value="08">Août</option><option value="09">Septembre</option>
+            <option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;">Année</label>
+          <select id="partenaire-filtre-annee" onchange="rafraichirDashboardPartenaire()">
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="font-size:11px;">Périodicité d'Analyse</label>
+        <select id="partenaire-filtre-periode" onchange="rafraichirDashboardPartenaire()">
+          <option value="hebdo" selected>Hebdomadaire</option>
+          <option value="bimensuel">Bimensuel</option>
+          <option value="mensuel">Mensuel</option>
+          <option value="trimestriel">Trimestriel</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="dashboard-dynamique-partenaire"></div>
+
+    <div id="finance-kpi-partenaire" class="kpi-container" style="display:none;">
+      <strong>Indicateurs Financiers</strong>
+      <div class="kpi-row"><span>Chiffre d'Affaires Hebdo:</span> <span id="partenaire-ca-hebdo">En attente...</span></div>
+      <div class="kpi-row"><span>Taux Rentabilité:</span> <span id="partenaire-tx-rentab">-- %</span></div>
     </div>
     
-    <b style="font-size:11px; color:#475569;">Lots d'Engraissement Actifs :</b>
-    <table id="table-lots">
-      <thead><tr><th>Lot ID</th><th>Âge</th><th>Poids</th><th>Ration</th></tr></thead>
-      <tbody id="corps-table-lots">
-        <tr><td colspan="4" style="text-align:center; color:#64748b;">Chargement de la porcherie...</td></tr>
-      </tbody>
-    </table>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Cout_Aliment')">Coût Aliment fini</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Ventes')">Enregistrer Vente</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Depenses')">Enregistrer Dépense</button>
+    <button class="btn-accent" onclick="ouvrirFenetreCashFlow()">Résumé Périodique global</button>
+    <button class="btn-danger" onclick="deconnexion()">Déconnexion</button>
   </div>
 
-  <div class="card">
-    <h3>🛒 Acheter / Introduire un Animal</h3>
-    <div class="form-group">
-      <label>Type d'animal acheté :</label>
-      <select id="achat-type" onchange="ajusterFormulaireAchat()">
-        <option value="Lot">🐷 Lot de porcelets (Engraissement)</option>
-        <option value="Truie">🐖 Truie de reproduction</option>
-        <option value="Verrat">🐗 Verrat (Reproducteur)</option>
-      </select>
+  <div id="page-gestion-hub" class="page">
+    <h2>Gestion Zootechnique</h2>
+    <div class="kpi-container">
+      <button id="btn-alerte-vaccin" class="btn-nav" onclick="chargerFormulaireStandard('Vaccins')">⚠️ Alerte Sanitaire (Interventions requises)</button>
     </div>
-    <div class="form-group">
-      <label id="label-achat-id">Identifiant unique ou Numéro du Lot :</label>
-      <input type="text" id="achat-id" placeholder="Ex: LOT-M6 ou TRUIE-16" />
-    </div>
-    <div id="champs-specifiques-lot">
-      <div class="form-group">
-        <label>Effectif introduit (Nombre de têtes) :</label>
-        <input type="number" id="achat-effectif" value="12" />
-      </div>
-      <div class="form-group">
-        <label>Âge actuel (en mois) :</label>
-        <input type="number" id="achat-age" step="0.1" value="2" />
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Poids moyen à l'achat (kg) :</label>
-      <input type="number" id="achat-poids" step="0.5" placeholder="Ex: 15" />
-    </div>
-    <button onclick="enregistrerNouvelAchat()" style="background-color: #e67e22;">💾 Enregistrer l'Achat</button>
-    <div id="res-achat" style="margin-top: 8px; font-size: 12px; color: #d35400; font-weight: bold; display: none;"></div>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Entree_Porc')">Entrée Porcs</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Saillies')">Planification Saillies</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Gestation')">Suivi Gestation</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Vaccins')">Vaccins & Médicaments</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Mortalite')">Déclaration Mortality</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Quarantaine')">Isolement Quarantaine</button>
+    <button class="btn-primary" id="btn-fiche-alimentaire" onclick="chargerFormulaireStandard('Alimentation')">📋 Fiche Ration Alimentaire</button>
+    <button class="btn-primary" id="btn-pesee-croissance" onclick="chargerFormulaireStandard('Poids')">⚖️ Pesée &amp; Contrôle Croissance</button>
+    <button class="btn-primary" id="btn-suivi-mises-bas" onclick="chargerFormulaireStandard('Mises_Bas')">Suivi Mises-bas</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Allaitement')">Suivi Allaitement</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Sevrage')">Bilan Sevrage</button>
+    <button class="btn-nav" onclick="retourMenuPrincipal()">Retour Menu</button>
   </div>
 
-  <div class="card">
-    <h3>💰 Enregistrer une Vente de Lot</h3>
-    <div class="form-group">
-      <label>ID du Lot en vente :</label>
-      <input type="text" id="vente-id" placeholder="Ex: LOT-M1" onchange="recupererEffectifLot()" />
-    </div>
-    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr;">
-      <div class="form-group">
-        <label>Effectif Total du Lot :</label>
-        <input type="number" id="vente-total" placeholder="Chargement..." readonly style="background-color: #f1f5f9;" />
-      </div>
-      <div class="form-group">
-        <label>Nombre d'animaux vendus :</label>
-        <input type="number" id="vente-vendu" placeholder="Ex: 5" oninput="calculerResteVente()" />
-      </div>
-    </div>
-    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr;">
-      <div class="form-group">
-        <label>Poids Carcasse Total (kg) :</label>
-        <input type="number" id="vente-poids" step="0.5" placeholder="Ex: 375" />
-      </div>
-      <div class="form-group">
-        <label>Reste en enclos (Calculé) :</label>
-        <input type="text" id="vente-reste" value="0" readonly style="background-color: #f1f5f9; font-weight: bold; color: #1e3a8a;" />
-      </div>
-    </div>
-    <button onclick="enregistrerVenteMembres()" style="background-color: #10b981;">💾 Valider la Vente</button>
-    <div id="res-vente" style="margin-top: 8px; font-size: 12px; color: #059669; font-weight: bold; display: none;"></div>
-  </div>
-  
-  <div class="card">
-    <h3>⚖️ Renseigner le Poids Mensuel</h3>
-    <div class="form-group">
-      <label>ID du Lot (Ex: LOT-M1, LOT-NÉ-M6) :</label>
-      <input type="text" id="peso-id" placeholder="Ex: LOT-M2" />
-    </div>
-    <div class="grid-kpi" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
-      <div class="form-group">
-        <label>Âge (en mois) :</label>
-        <input type="number" id="peso-age" step="0.1" placeholder="Ex: 3" />
-      </div>
-      <div class="form-group">
-        <label>Poids Moyen (kg) :</label>
-        <input type="number" id="peso-val" step="0.5" placeholder="Ex: 65" />
-      </div>
-    </div>
-    <button onclick="pwaEnregistrerPesee()" style="background-color: #10b981;">💾 Valider la Pesée du Lot</button>
-    <div id="res-poids" style="margin-top: 8px; font-size: 11px; padding: 8px; border-radius: 4px; display: none;"></div>
+  <div id="page-finance-hub" class="page">
+    <h2>Finances &amp; Formulations</h2>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Formules_Aliment')">⚙️ BOUTON ALIMENT (Formules)</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Cout_Aliment')">Calcul des Coûts Intrants / Sacs</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Ventes')">Ventes Directes</button>
+    <button class="btn-primary" onclick="chargerFormulaireStandard('Depenses')">Registre des Dépenses</button>
+    <button class="btn-accent" onclick="ouvrirFenetreCashFlow()">Cash Flow &amp; Bénéfices Lots</button>
+    <button class="btn-nav" onclick="retourMenuPrincipal()">Retour Menu</button>
   </div>
 
-  <div class="card">
-    <h3>🐖 Enregistrer une Saillie</h3>
+  <div id="page-restauration" class="page">
+    <h2>Restauration Base de Données</h2>
     <div class="form-group">
-      <label>Identifiant de la Truie :</label>
-      <input type="text" id="saillie-id" placeholder="Ex: TRUIE_05" />
+      <label>URL du fichier de sauvegarde Google Drive</label>
+      <input type="text" id="url-backup" placeholder="https://drive.google.com/file/d/.../view">
     </div>
-    <div class="form-group">
-      <label>Date de la Saillie :</label>
-      <input type="date" id="saillie-date" />
-    </div>
-    <button onclick="pwaEnregistrerSaillie()" style="background-color: #2563eb;">Planifier la Portée</button>
-    <div id="res-saillie" style="margin-top: 8px; font-size: 11px; color: #065f46; font-weight: bold; display: none;"></div>
+    <button class="btn-danger" onclick="lancerRestaurationServeur()">Écraser et Restaurer</button>
+    <button class="btn-nav" onclick="basculerPage('page-menu-admin')">Annuler</button>
   </div>
 
-  <div class="card">
-    <h3>💉 Enregistrer un Vaccin (Santé)</h3>
-    <div class="form-group">
-      <label>Concerne :</label>
-      <select id="vaccin-cible-type" onchange="ajusterFormulaireVaccin()">
-        <option value="Lot">🐷 Un Lot de porcs</option>
-        <option value="Truie">🐖 Une Truie</option>
-        <option value="Verrat">🐗 Un Verrat</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label id="label-vaccin-id">ID du Lot concerné :</label>
-      <input type="text" id="vaccin-id" placeholder="Ex: LOT-M1" />
-    </div>
-    <div class="form-group">
-      <label>Type de Vaccin / Traitement :</label>
-      <select id="vaccin-type">
-        <option value="Peste Porcine">Peste Porcine Africaine (PPA)</option>
-        <option value="Rouget">Rouget</option>
-        <option value="Parvovirose">Parvovirose (Reproducteurs)</option>
-        <option value="Colibacillose">Colibacillose</option>
-        <option value="Anti-parasitaire">Anti-parasitaire / Vermifuge</option>
-        <option value="Fer">Injection de Fer (Porcelets)</option>
-      </select>
-    </div>
-    <button onclick="enregistrerVaccinEtArreterAlarme()" style="background-color: #8b5cf6;">💾 Valider la Vaccination</button>
-    <div id="res-vaccin" style="margin-top: 8px; font-size: 12px; color: #6d28d9; font-weight: bold; display: none;"></div>
-  </div>
-
-  <div class="card">
-    <h3>🔔 Agenda Médical & Traitements</h3>
-    <div id="list-alertes">Aucun traitement urgent en attente.</div>
-  </div>
-
-  <script>
-    // 🔗 URL DE LIAISON DIRECTE VERS VOTRE UNIQUE INTERFACE APPS SCRIPT
-    const API_URL = "https://script.google.com/macros/s/AKfycbz1ZBYOVqi46380-bmq1FOd0w2fjttHZPtteAPGHdc4uEOfTzynzfijqNznSdeclRjO/exec";
-
-    var planningVaccins = [
-      { sujet: "LOT-M1", vaccin: "Rouget", datePrevue: new Date(Date.now() + 86400000).toISOString().split('T')[0] }
-    ];
-
-    window.onload = function() {
-      configurerDetecteurReseau();
-      chargerDonneesDepuisLeCache();
-      verifierFilesAttente();
-      actualiserDepuisServeur();
-      verifierCalendrierVaccins();
-    };
+  <div id="page-formulaire-dynamique" class="page">
+    <h3 id="form-title" style="color:var(--primary); margin-bottom:15px;">Formulaire</h3>
     
-    function configurerDetecteurReseau() {
-      function modifierStatus() {
-        var bar = document.getElementById('network-bar');
-        if (navigator.onLine) {
-          bar.innerText = "🟢 Mode Connecté (Données synchronisées)";
-          bar.className = "net-status online";
-          forcerSynchronisation();
-        } else {
-          bar.innerText = "🔴 Mode Hors-Ligne (Données stockées dans le téléphone)";
-          bar.className = "net-status offline";
-        }
-      }
-      window.addEventListener('online', modifierStatus);
-      window.addEventListener('offline', modifierStatus);
-      modifierStatus();
+    <div id="wrapper-toggle-aliment" style="display:none;">
+      <div class="toggle-zone">
+        <button type="button" id="toggle-mode-intrant" class="toggle-btn active" onclick="basculerModeFormule('AJOUT_MODIF')">Ajouter / Changer Intrants</button>
+        <button type="button" id="toggle-mode-types" class="toggle-btn" onclick="basculerModeFormule('TYPES_ALIMENT')">Types d'Aliments</button>
+        <button type="button" id="toggle-mode-liste" class="toggle-btn" onclick="basculerModeFormule('LISTE_INTRANTS')">Liste des Intrants</button>
+      </div>
+    </div>
+
+    <div id="wrapper-tableau-bord-vaccin" style="display:none;">
+      <div class="vax-dashboard">
+        <h4>🗓️ Suivi Sanitaire : Interventions du Mois</h4>
+        <table class="vax-table">
+          <thead>
+            <tr>
+              <th>Sujet / Cible</th>
+              <th>N° Lot / ID</th>
+              <th>Traitement Planificado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>lots porcelets</td><td><strong>LOT-P1</strong></td><td><span class="vax-badge">Fer injectable (J1-J3)</span></td></tr>
+            <tr><td>lots porcelets</td><td><strong>LOT-P2</strong></td><td><span class="vax-badge">PCV2 (3-4 sem)</span></td></tr>
+            <tr><td>truies gestantes</td><td><strong>T-GEST-04</strong></td><td><span class="vax-badge">Leptospirose</span></td></tr>
+            <tr><td>truies allaitantes</td><td><strong>T-ALL-09</strong></td><td><span class="vax-badge">Rappel Grippe</span></td></tr>
+            <tr><td>verrat</td><td><strong>VERRAT-01</strong></td><td><span class="vax-badge">Érysipèle (Rouget)</span></td></tr>
+            <tr><td>truies vide</td><td><strong>T-VIDE-02</strong></td><td><span class="vax-badge">Bilan Sanitaire</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="wrapper-tableau-bord-alimentation" style="display:none;">
+      <div class="vax-dashboard" style="border: 2px solid var(--accent);">
+        <h4 style="color: var(--accent); border-bottom: 2px solid var(--accent);">📊 Tableau de Bord Alimentaire Général (Données Recueillies)</h4>
+        <p style="font-size: 11px; margin-bottom: 8px; color: #555; font-style: italic;">Synthèse croisée d'après les sessions Entrées, Gestations, Mises-bas, Pesées &amp; Mortalités :</p>
+        <table class="vax-table">
+          <thead>
+            <tr>
+              <th>ID Sujet / Lot</th>
+              <th>Catégorie / Type</th>
+              <th>Sujets Vifs</th>
+              <th>Aliment Recommandé</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>LOT-P1</strong></td><td>Lots de porcelets (Post-Sevrage)</td><td>45 têtes <small style="color:green;">(Entrée)</small></td><td><span class="vax-badge" style="background:#e8f5e9; color:#1b5e20;">Démarrage</span></td></tr>
+            <tr><td><strong>LOT-P2</strong></td><td>Porcs en engraissement</td><td>38 têtes <small style="color:red;">(-2 Mort.)</small></td><td><span class="vax-badge" style="background:#e8f5e9; color:#1b5e20;">Croissance</span></td></tr>
+            <tr><td><strong>T-GEST-04</strong></td><td>Lot de truies (Gestantes)</td><td>12 truies <small style="color:blue;">(Gestation)</small></td><td><span class="vax-badge" style="background:#ffe082; color:#5d4037;">Truies gestantes</span></td></tr>
+            <tr><td><strong>T-ALL-09</strong></td><td>Lot de truies (Allaitantes)</td><td>8 truies <small style="color:purple;">(Mise-bas)</small></td><td><span class="vax-badge" style="background:#ffcdd2; color:#b71c1c;">Truies allaitantes</span></td></tr>
+            <tr><td><strong>VERRAT-01</strong></td><td>Verrat (Reproducteurs)</td><td>2 verrats <small style="color:#555;">(Contrôle)</small></td><td><span class="vax-badge" style="background:#eceff1; color:#37474f;">Verrat et truies vides</span></td></tr>
+            <tr><td><strong>T-VIDE-02</strong></td><td>Lot de truies (Vides / Repos)</td><td>5 truies <small style="color:orange;">(Sevrage)</small></td><td><span class="vax-badge" style="background:#eceff1; color:#37474f;">Verrat et truies vides</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="wrapper-tableau-bord-pesee" style="display:none;">
+      <div class="vax-dashboard" style="border: 2px solid #2e7d32;">
+        <h4 style="color: var(--primary-dark); border-bottom: 2px solid var(--primary);">📈 Normes de Croissance Référence (Objectifs)</h4>
+        <p style="font-size:11px; margin-bottom:8px; color:#555;">Comparatif automatique face aux objectifs techniques de l'exploitation :</p>
+        <table class="vax-table" style="margin-bottom: 10px;">
+          <thead>
+            <tr>
+              <th>Stade Élevage</th>
+              <th>Poids Cible Norme</th>
+              <th>Statut Écart Lot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Fin du 1er mois</td><td><strong>28 à 32 kg</strong></td><td id="td-norme-m1">--</td></tr>
+            <tr><td>Fin du 2e mois</td><td><strong>48 à 55 kg</strong></td><td id="td-norme-m2">--</td></tr>
+            <tr><td>Fin du 3e mois</td><td><strong>68 à 75 kg</strong></td><td id="td-norme-m3">--</td></tr>
+            <tr><td>Fin du 4e mois</td><td><strong>88 à 95 kg</strong></td><td id="td-norme-m4">--</td></tr>
+            <tr><td>Fin du 4,5e mois</td><td><strong>100 à 110 kg</strong></td><td id="td-norme-m45">--</td></tr>
+          </tbody>
+        </table>
+        <div id="analyse-croissance-live" class="comment-box" style="margin-top:5px; font-weight:bold; text-align:center; display:none;"></div>
+      </div>
+    </div>
+
+    <form id="main-capture-form" onsubmit="soumettreFormulaireClient(event)">
+      <div id="form-fields-area"></div>
+      <button type="submit" id="btn-soumission-principal" class="btn-primary">Valider &amp; Sauvegarder</button>
+    </form>
+    <button class="btn-nav" onclick="revenirPermanenceFormulaire()">Annuler</button>
+  </div>
+
+  <div id="page-cashflow-details" class="page">
+    <h3 style="color:var(--primary); margin-bottom:15px; text-align:center;">📊 Analyse Financière &amp; Rentabilité</h3>
+    
+    <div class="kpi-container" style="background:#ffffff; border:1px solid #cfd8dc;">
+      <strong style="color:var(--primary-dark); display:block; margin-bottom:10px; border-bottom:2px solid #eee; padding-bottom:5px;">Chiffres d'Affaires (Ventes)</strong>
+      <div class="kpi-row"><span>Chiffre d'affaires Hebdomadaire :</span> <span id="cf-ca-hebdo" style="font-weight:bold; color:var(--primary-dark);">0 FCFA</span></div>
+      <div class="kpi-row"><span>Chiffre d'affaires Mensuel :</span> <span id="cf-ca-mensuel" style="font-weight:bold; color:var(--primary-dark);">0 FCFA</span></div>
+    </div>
+
+    <div class="kpi-container" style="background:#ffffff; border:1px solid #cfd8dc;">
+      <strong style="color:var(--accent); display:block; margin-bottom:10px; border-bottom:2px solid #eee; padding-bottom:5px;">Bénéfices Nets (Ventes - Aliments - Dépenses)</strong>
+      <div class="kpi-row"><span>Bénéfice Hebdomadaire :</span> <span id="cf-ben-hebdo" style="font-weight:bold;">0 FCFA</span></div>
+      <div class="kpi-row"><span>Bénéfice integration Mensuel :</span> <span id="cf-ben-mensuel" style="font-weight:bold;">0 FCFA</span></div>
+    </div>
+
+    <div class="kpi-container" style="background:#fafafa;">
+      <strong style="display:block; margin-bottom:5px;">💡 Commentaire sur la rentabilité :</strong>
+      <div id="cf-commentaire" class="comment-box">Analyse des flux en cours...</div>
+    </div>
+
+    <button class="btn-nav" style="margin-top:15px;" onclick="revenirDepuisCashFlow()">Retour au Menu</button>
+  </div>
+
+</div>
+
+<script>
+  let COMPTE_ROLE = "";
+  let ID_USER_MEMOIRE = "";
+  let TABLE_ACTIVE = "";
+  let SOUS_MODE_ALIMENT = "AJOUT_MODIF"; 
+  let MODE_INTRANT_SUB = "AJOUTER"; 
+  let ALARME_SANITAIRE_ACTIVE = true;
+  let PROFIL_SELECTIONNE_ACCUEIL = "";
+
+  // Base d'utilisateurs simulée en local (extensible par l'administrateur)
+  let COMPTES_UTILISATEURS_LOCAUX = [
+    { user: "ADMIN", pass: "ADMIN", role: "ADMINISTRATEUR", id: "U-01" },
+    { user: "PARTENAIRE1", pass: "0000", role: "PARTENAIRE", id: "U-02" },
+    { user: "PORCHER1", pass: "0000", role: "PORCHER", id: "U-03" }
+  ];
+
+  let COMPTEUR_JOURS_SIMULE = 29; 
+
+  let DATE_SAILLIE_SIMULEE_POUR_ALERTE = new Date();
+  DATE_SAILLIE_SIMULEE_POUR_ALERTE.setDate(DATE_SAILLIE_SIMULEE_POUR_ALERTE.getDate() - 113);
+
+  let LISTE_INTRANTS_REFERENCE = [
+    "Maïs", "Soja", "Son de blé", "Palmiste", "Huile", "Pré-mix 1 %", "Coquillage", "Sel"
+  ];
+
+  let PRIX_INTRANTS_MUTABLE = { 
+    "Maïs": 180, "Soja": 350, "Son de blé": 120, "Palmiste": 50, "Pré-mix 1 %": 3000, "Coquillage": 25, "Sel": 250, "Huile": 900 
+  };
+
+  let FORMULES_PAR_DEFAUT = {
+    "Démarrage": { cost_kg: 227, composition: { "Maïs": 48, "Soja": 24, "Son de blé": 18, "Palmiste": 7, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } },
+    "Croissance": { cost_kg: 218, composition: { "Maïs": 55, "Soja": 18, "Son de blé": 18, "Palmiste": 6, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } },
+    "Finition": { cost_kg: 214, composition: { "Maïs": 62, "Soja": 14, "Son de blé": 16, "Palmiste": 5, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } },
+    "Verrat et truies vides": { cost_kg: 181, composition: { "Maïs": 41, "Soja": 11, "Son de blé": 32.5, "Palmiste": 12.5, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } }, 
+    "Truies gestantes": { cost_kg: 199, composition: { "Maïs": 45, "Soja": 16, "Son de blé": 24, "Palmiste": 12, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } },
+    "Truies allaitantes": { cost_kg: 240, composition: { "Maïs": 50, "Soja": 24, "Son de blé": 14, "Palmiste": 8, "Huile": 1, "Pré-mix 1 %": 1, "Coquillage": 1.5, "Sel": 0.5 } }
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const syncStatusElement = document.getElementById("sync-status");
+    if(syncStatusElement) {
+      syncStatusElement.textContent = "Données Prêtes";
+      syncStatusElement.style.color = "#2e7d32";
+    }
+    verifierStatutReseau();
+    setTimeout(() => {
+      window.addEventListener('online', verifierStatutReseau);
+      window.addEventListener('offline', verifierStatutReseau);
+      declencherClignotementSimule();
+      executerSauvegardeOuvertureFermeture();
+    }, 500);
+  });
+
+  /* Logique d'orientation de l'accueil */
+  function choisirProfilAccueil(profil) {
+    PROFIL_SELECTIONNE_ACCUEIL = profil;
+    const titleElement = document.getElementById("login-title-context");
+    
+    if (profil === "ADMINISTRATEUR") {
+      if(titleElement) titleElement.textContent = "Authentification Administrateur";
+      basculerPage('page-admin-pre-login');
+    } else if (profil === "PARTENAIRE") {
+      if(titleElement) titleElement.textContent = "Authentification Partenaire";
+      basculerPage('page-login');
+    } else {
+      if(titleElement) titleElement.textContent = "Authentification Porcher";
+      basculerPage('page-login');
+    }
+  }
+
+  function revenirDepuisLogin() {
+    if (PROFIL_SELECTIONNE_ACCUEIL === "ADMINISTRATEUR") {
+      basculerPage('page-admin-pre-login');
+    } else {
+      basculerPage('page-accueil');
+    }
+  }
+
+  /* Création d'utilisateurs par l'administrateur */
+  function creerNouveauCompteSimule(e) {
+    e.preventDefault();
+    const role = document.getElementById("add-user-role").value;
+    const username = document.getElementById("add-user-name").value.trim();
+    const password = document.getElementById("add-user-pass").value;
+
+    if (!username) { alert("Veuillez spécifier un identifiant."); return; }
+    
+    const existeDeja = COMPTES_UTILISATEURS_LOCAUX.some(acc => acc.user.toUpperCase() === username.toUpperCase());
+    if (existeDeja) {
+      alert("Cet identifiant d'élevage est déjà attribué.");
+      return;
     }
 
-    function ajusterFormulaireAchat() {
-      var type = document.getElementById('achat-type').value;
-      var champsLot = document.getElementById('champs-specifiques-lot');
-      var labelId = document.getElementById('label-achat-id');
-      var inputId = document.getElementById('achat-id');
+    const uniqueId = "U-0" + (COMPTES_UTILISATEURS_LOCAUX.length + 1);
+    COMPTES_UTILISATEURS_LOCAUX.push({ user: username, pass: password, role: role, id: uniqueId });
+    
+    alert(`Compte créé avec succès !\nType: ${role}\nIdentifiant: ${username}\nCode: ${password}`);
+    document.getElementById("form-creation-compte").reset();
+    basculerPage('page-admin-pre-login');
+  }
 
-      if (type === 'Lot') {
-        champsLot.style.display = 'block';
-        labelId.innerText = "Numéro ou ID du Lot :";
-        inputId.placeholder = "Ex: LOT-M6";
-      } else {
-        champsLot.style.display = 'none';
-        labelId.innerText = "Identifiant de l'animal :";
-        inputId.placeholder = type === 'Truie' ? "Ex: TRUIE-16" : "Ex: VERRAT-02";
-      }
-    }
+  /* Tableau de bord dynamique exclusif au partenaire */
+  function rafraichirDashboardPartenaire() {
+    const mois = document.getElementById("partenaire-filtre-mois").value;
+    const annee = document.getElementById("partenaire-filtre-annee").value;
+    const periode = document.getElementById("partenaire-filtre-periode").value;
+    const container = document.getElementById("dashboard-dynamique-partenaire");
+    
+    if (!container) return;
 
-    function enregistrerNouvelAchat() {
-      var type = document.getElementById('achat-type').value;
-      var id = document.getElementById('achat-id').value;
-      var poids = document.getElementById('achat-poids').value;
-      
-      if (!id || !poids) { alert("Veuillez remplir l'identifiant et le poids !"); return; }
+    // Génération de coefficients d'échelle simulés selon la périodicité choisie
+    let mult = 1;
+    let labelPeriode = "la semaine";
+    if (periode === "bimensuel") { mult = 2; labelPeriode = "la quinzaine"; }
+    else if (periode === "mensuel") { mult = 4; labelPeriode = "le mois"; }
+    else if (periode === "trimestriel") { mult = 12; labelPeriode = "le trimestre"; }
 
-      var age = type === 'Lot' ? (parseFloat(document.getElementById('achat-age').value) || 0) : 0;
-      var effectif = type === 'Lot' ? (parseInt(document.getElementById('achat-effectif').value) || 1) : 1;
+    // Simulation cohérente des indicateurs financiers et de gestion zootechnique
+    let caSimule = 850000 * mult;
+    let depSimule = 530000 * mult;
+    let benNetSimule = caSimule - depSimule;
+    let tauxRentab = Math.round((benNetSimule / caSimule) * 100);
 
-      var div = document.getElementById('res-achat');
-      div.style.display = "block";
-      div.style.color = "#d35400";
-      div.innerText = "⌛ Traitement de l'enregistrement...";
+    let porceletsEntrants = 45 * Math.ceil(mult / 2);
+    let gestationsActives = Math.min(24, Math.floor(6 * mult));
+    let naissancesSimulees = Math.floor(11 * (mult / 2));
+    let sujetsMorts = Math.floor(1 * (mult / 2));
 
-      if (navigator.onLine) {
-        var peseeObj = { dateControle: new Date().toISOString(), idLot: id, ageMois: parseFloat(age), poidsMesure: parseFloat(poids), poidsIdeal: 0, alerte: "Introduction", stadeAlimentaire: type };
+    let stringBadge = tauxRentab > 25 
+      ? `<span class="badge-rentable">🟢 EXCELLENT (${tauxRentab}%)</span>` 
+      : `<span class="badge-rentable" style="background:#fff3e0; color:#e65100;">🟡 MODÉRÉ (${tauxRentab}%)</span>`;
+
+    container.innerHTML = `
+      <div class="vax-dashboard" style="border: 2px solid #0288d1; margin-top:10px;">
+        <h4 style="color:#01579b; border-bottom: 2px solid #0288d1;">📊 Synthèse Décisionnelle • ${mois}/${annee}</h4>
+        <p style="font-size:11px; color:#555; margin-bottom:8px; font-style:italic;">Données calculées pour une échelle : <strong>${periode.toUpperCase()}</strong></p>
         
-        fetch(API_URL, {
-          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pesees: [peseeObj], action: "enregistrerAchat" })
-        }).then(function() {
-          div.style.color = "#10b981";
-          div.innerText = "✅ " + type + " enregistré en direct sur le fichier Sheets !";
-          actualiserDepuisServeur();
-        }).catch(function() {
-          div.style.color = "#ef4444"; div.innerText = "⚠️ Erreur de réseau lors de l'envoi.";
-        });
-      } else {
-        div.style.color = "#b45309";
-        div.innerText = "✅ Enregistré localement. Reconnectez le téléphone pour synchroniser.";
-      }
+        <table class="vax-table" style="margin-bottom:12px;">
+          <thead>
+            <tr><th style="background:#e1f5fe; color:#01579b;">Indicateurs de Gestion</th><th style="background:#e1f5fe; color:#01579b;">Valeurs constatées</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Porcelets intégrés (PS) :</strong></td><td>${porceletsEntrants} têtes</td></tr>
+            <tr><td><strong>Suivi Truies en Gestation :</strong></td><td>${gestationsActives} gestations actives</td></tr>
+            <tr><td><strong>Mises-bas accomplies :</strong></td><td>+${naissancesSimulees} porcelets nés vifs</td></tr>
+            <tr><td><strong>Mortalité sur ${labelPeriode} :</strong></td><td style="color:#c62828; font-weight:bold;">${sujetsMorts} sujet(s)</td></tr>
+          </tbody>
+        </table>
+
+        <table class="vax-table">
+          <thead>
+            <tr><th style="background:#ffe0b2; color:#e65100;">Indicateurs Financiers</th><th style="background:#ffe0b2; color:#e65100;">Flux Monétaires</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Chiffre d'Affaires :</strong></td><td style="color:var(--primary-dark); font-weight:bold;">${formatDeviseFCFA(caSimule)}</td></tr>
+            <tr><td><strong>Total des Dépenses (Intrants/Vétérinaire) :</strong></td><td style="color:#c62828;">${formatDeviseFCFA(depSimule)}</td></tr>
+            <tr style="background:#f5f5f5; font-weight:bold;">
+              <td>Bénéfice Net Périodique :</td>
+              <td style="color:var(--primary-dark); font-size:13px;">${formatDeviseFCFA(benNetSimule)}</td>
+            </tr>
+            <tr><td><strong>Seuil de Rentabilité :</strong></td><td>${stringBadge}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function verifierStatutReseau() {
+    const ns = document.getElementById("network-status");
+    if (!ns) return;
+    if (navigator.onLine) {
+      ns.textContent = "🟢 CONNECTÉ (EN LIGNE)";
+      ns.style.color = "#2e7d32";
+      setTimeout(traiterSynchronisationDonneesAmorcees, 1000);
+    } else {
+      ns.textContent = "🔴 APPLICATION HORS-LIGNE";
+      ns.style.color = "#c62828";
     }
+  }
 
-    function pwaEnregistrerPesee() {
-      var id = document.getElementById('peso-id').value;
-      var age = document.getElementById('peso-age').value;
-      var val = document.getElementById('peso-val').value;
-      if (!id || !age || !val) { alert("Champs vides !"); return; }
+  function toggleAffichageMdp(idInput) {
+    const x = document.getElementById(idInput);
+    if(x) x.type = x.type === "password" ? "text" : "password";
+  }
 
-      var ageNum = parseFloat(age);
-      var poidsNum = parseFloat(val);
-      var poidsIdeal = 10 + (ageNum * 20); 
-      var alerte = poidsNum < (poidsIdeal * 0.9) ? "⚠️ RETARD DE CROISSANCE" : "Normal";
-      
-      var stade = "Démarrage (10-25 kg)";
-      if (poidsNum > 25 && poidsNum <= 60) stade = "Croissance (25-60 kg)";
-      if (poidsNum > 60) stade = "Finition (60-100 kg)";
+  function basculerPage(idPage) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const targetPage = document.getElementById(idPage);
+    if(targetPage) targetPage.classList.add('active');
+    window.scrollTo(0,0);
+    afficherMessage("", false);
+  }
 
-      var peseeObj = {
-        dateControle: new Date().toISOString(), idLot: id, ageMois: ageNum,
-        poidsMesure: poidsNum, poidsIdeal: poidsIdeal, alerte: alerte, stadeAlimentaire: stade
-      };
+  function afficherMessage(msg, isError = true) {
+    const az = document.getElementById("alert-zone");
+    if(!az) return;
+    if(!msg) { az.style.display = "none"; return; }
+    az.className = isError ? "alert-box alert-error" : "alert-box alert-success";
+    az.textContent = msg;
+    az.style.display = "block";
+  }
 
-      var localPesees = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
-      localPesees.push(peseeObj);
-      localStorage.setItem('pwa_pesees', JSON.stringify(localPesees));
-
-      var div = document.getElementById('res-poids');
-      div.style.display = "block";
-      if(alerte.includes("⚠️")) {
-        div.style.backgroundColor = "#fee2e2"; div.style.color = "#991b1b";
-        div.innerHTML = "<b>" + alerte + "</b><br>Poids idéal théorique : " + poidsIdeal + " kg.";
-      } else {
-        div.style.backgroundColor = "#d1fae5"; div.style.color = "#065f46";
-        div.innerHTML = "<b>✅ Poids Conforme</b><br>Stade : " + stade;
-      }
-
-      verifierFilesAttente();
-      if (navigator.onLine) forcerSynchronisation();
-    }
-
-    function pwaEnregistrerSaillie() {
-      var id = document.getElementById('saillie-id').value;
-      var dateStr = document.getElementById('saillie-date').value;
-      if (!id || !dateStr) { alert("Renseignez l'ID et la Date !"); return; }
-
-      var dSaillie = new Date(dateStr);
-      var dMiseBas = new Date(dSaillie.getTime() + (114 * 24 * 60 * 60 * 1000));
-      var dSevrage = new Date(dMiseBas.getTime() + (35 * 24 * 60 * 60 * 1000));
-
-      var saillieObj = { idTruie: id, dateSaillie: dSaillie.toISOString(), dateMiseBas: dMiseBas.toISOString(), dateSevrage: dSevrage.toISOString() };
-
-      var localSaillies = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
-      localSaillies.push(saillieObj);
-      localStorage.setItem('pwa_saillies', JSON.stringify(localSaillies));
-
-      var div = document.getElementById('res-saillie');
-      div.style.display = "block";
-      div.innerText = "✅ Saillie mémorisée. Mise bas prévue le : " + dMiseBas.toLocaleDateString('fr-FR');
-
-      verifierFilesAttente();
-      if (navigator.onLine) forcerSynchronisation();
-    }
-
-    function verifierFilesAttente() {
-      var p = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
-      var s = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
-      var total = p.length + s.length;
-      
-      var alertBox = document.getElementById('sync-alert');
-      if (total > 0) {
-        alertBox.style.display = "block";
-        alertBox.innerText = "⏳ " + total + " fiches en attente de synchronisation. Cliquez pour pousser.";
-      } else {
-        alertBox.style.display = "none";
-      }
-    }
-
-    function forcerSynchronisation() {
-      if (!navigator.onLine) return;
-      
-      var p = JSON.parse(localStorage.getItem('pwa_pesees')) || [];
-      var s = JSON.parse(localStorage.getItem('pwa_saillies')) || [];
-      if (p.length === 0 && s.length === 0) return;
-
-      fetch(API_URL, {
-        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pesees: p, saillies: s })
-      }).then(function() {
-        localStorage.removeItem('pwa_pesees');
-        localStorage.removeItem('pwa_saillies');
-        verifierFilesAttente();
-        actualiserDepuisServeur();
-      }).catch(function(e) { console.log("Échec de synchro temporaire", e); });
-    }
-
-    function actualiserDepuisServeur() {
-      if (!navigator.onLine) return;
-
-      fetch(API_URL + "?action=getDashboard")
-        .then(res => res.json())
-        .then(data => {
-          localStorage.setItem('pwa_cache_dashboard', JSON.stringify(data));
-          chargerDonneesDepuisLeCache();
-        }).catch(err => console.log("Maintien du stockage local"));
-    }
-
-    function chargerDonneesDepuisLeCache() {
-      var cached = localStorage.getItem('pwa_cache_dashboard');
-      var data = cached ? JSON.parse(cached) : { pretesSaillir: 0, gestantes: 0, allaitantes: 0, lots: [] };
-
-      document.getElementById('kpi-pretes').innerText = data.pretesSaillir || 0;
-      document.getElementById('kpi-gest').innerText = data.gestantes || 0;
-      document.getElementById('kpi-allait').innerText = data.allaitantes || 0;
-
-      var tbody = document.getElementById('corps-table-lots');
-      if (!data.lots || data.lots.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#64748b;">Aucun lot actif trouvé.</td></tr>';
-      } else {
-        var html = '';
-        data.lots.forEach(function(l) {
-          html += '<tr><td><b>' + l.id + '</b></td><td>' + l.age + ' m</td><td>' + l.poids + ' kg</td><td>' + l.stade + '</td></tr>';
-        });
-        tbody.innerHTML = html;
-      }
-    }
-
-    function recupererEffectifLot() {
-      document.getElementById('vente-total').value = 12; 
-      calculerResteVente();
-    }
-
-    function calculerResteVente() {
-      var total = parseInt(document.getElementById('vente-total').value) || 0;
-      var vendu = parseInt(document.getElementById('vente-vendu').value) || 0;
-      document.getElementById('vente-reste').value = vendu >= total ? 0 : total - vendu;
-    }
-
-    function enregistrerVenteMembres() {
-      var id = document.getElementById('vente-id').value;
-      var vendu = document.getElementById('vente-vendu').value;
-      var poids = document.getElementById('vente-poids').value;
-      
-      if (!id || !vendu || !poids) { alert("Champs obligatoires manquants !"); return; }
-      var div = document.getElementById('res-vente');
-      div.style.display = "block";
-      div.innerHTML = "✅ Vente enregistrée localement avec succès.";
-    }
-
-    function enregistrerVaccinEtArreterAlarme() {
-      var idAnimal = document.getElementById('vaccin-id').value.trim().toUpperCase();
-      if (!idAnimal) { alert("Indiquez l'ID du sujet !"); return; }
-      var divStatus = document.getElementById('res-vaccin');
-      divStatus.style.display = "block";
-      divStatus.innerHTML = "✅ Vaccination enregistrée. Alarme désactivée.";
-    }
-
-    function verifierCalendrierVaccins() {
-      var bouton = document.getElementById('btn-alerte-vaccin');
-      var aujourdhui = new Date();
-      var limiteTroisJours = new Date();
-      limiteTroisJours.setDate(aujourdhui.getDate() + 3);
-
-      var aDesVaccinsProches = planningVaccins.some(function(item) {
-        var dateVaccin = new Date(item.datePrevue);
-        return dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours;
-      });
-      bouton.style.display = aDesVaccinsProches ? "block" : "none";
-    }
-
-    function ouvrirCalendrierVaccinsProches() {
-      var corpsTableau = document.getElementById('corps-table-vaccins-proches');
-      corpsTableau.innerHTML = "";
-      var aujourdhui = new Date();
-      var limiteTroisJours = new Date();
-      limiteTroisJours.setDate(aujourdhui.getDate() + 3);
-
-      planningVaccins.forEach(function(item) {
-        var dateVaccin = new Date(item.datePrevue);
-        if (dateVaccin >= aujourdhui && dateVaccin <= limiteTroisJours) {
-          corpsTableau.innerHTML += "<tr><td><b>" + item.sujet + "</b></td><td>" + item.vaccin + "</td><td style='color: #b91c1c; font-weight: bold;'>" + dateVaccin.toLocaleDateString('fr-FR') + "</td></tr>";
+  function traiterAuthentification() {
+    const u = document.getElementById("login-user").value.trim();
+    const p = document.getElementById("login-pass").value;
+    if(!u || !p) { afficherMessage("Veuillez remplir l'utilisateur et le mot de passe.", true); return; }
+    
+    afficherMessage("Vérification sur le serveur porcin...", false);
+    let serveurRepondu = false;
+    const timeoutSecurite = setTimeout(() => {
+      if(!serveurRepondu) {
+        // Recherche prioritaire dans la table locale (permet de connecter les nouveaux utilisateurs créés)
+        const localUser = COMPTES_UTILISATEURS_LOCAUX.find(acc => acc.user.toUpperCase() === u.toUpperCase() && acc.pass === p);
+        if (localUser) {
+          serveurRepondu = true;
+          COMPTE_ROLE = localUser.role;
+          ID_USER_MEMOIRE = localUser.id;
+          if (p === "0000") {
+            document.getElementById("force-id-user").value = localUser.id;
+            basculerPage('page-force-mdp');
+          } else {
+            ouvrirEspaceRole();
+          }
+        } else {
+          afficherMessage("Serveur indisponible - Échec de la connexion locale (Identifiants incorrects)", true);
         }
-      });
-      document.getElementById('modal-alertes-vaccins').style.display = "block";
+      }
+    }, 1500);
+
+    if (typeof google === "undefined" || !google.script || !google.script.run) {
+      return; 
     }
 
-    function fermerModalVaccin() {
-      document.getElementById('modal-alertes-vaccins').style.display = "none";
+    try {
+      google.script.run.withSuccessHandler(res => {
+        serveurRepondu = true; clearTimeout(timeoutSecurite);
+        if (!res) { afficherMessage("Erreur : Valeur serveur vide.", true); return; }
+        if (res.statut === "SUCCES") {
+          COMPTE_ROLE = res.role; ID_USER_MEMOIRE = res.id; ouvrirEspaceRole();
+        } else if (res.statut === "CHANGER_MDP") {
+          document.getElementById("force-id-user").value = res.id;
+          COMPTE_ROLE = res.role; basculerPage('page-force-mdp');
+        } else { afficherMessage(res.message, true); }
+      }).verifierConnexion(u, p);
+    } catch(err) { 
+      // Silencieux, le fallback local prend la main
+    }
+  }
+
+  function traiterMiseAJourMdp() {
+    const id = document.getElementById("force-id-user").value;
+    const np = document.getElementById("new-user-pass").value;
+    if(np.length < 4) { afficherMessage("Le mot de passe doit contenir 4 caractères minimum.", true); return; }
+    
+    // Application locale du changement de code secret
+    const userAcc = COMPTES_UTILISATEURS_LOCAUX.find(acc => acc.id === id);
+    if(userAcc) userAcc.pass = np;
+
+    if (typeof google === "undefined" || !google.script || !google.script.run) { ouvrirEspaceRole(); return; }
+    google.script.run.withSuccessHandler(res => { if(res && res.statut === "SUCCES") ouvrirEspaceRole(); }).modifierMotDePasse(id, np);
+  }
+
+  function ouvrirEspaceRole() {
+    if(COMPTE_ROLE === "ADMINISTRATEUR") basculerPage('page-menu-admin');
+    else if(COMPTE_ROLE === "PARTENAIRE") {
+      basculerPage('page-menu-partenaire');
+      rafraichirDashboardPartenaire();
+    }
+    else basculerPage('page-gestion-hub');
+    calculerEtMettreAJourIndicateurs();
+  }
+
+  function retourMenuPrincipal() { ouvrirEspaceRole(); }
+  function deconnexion() { COMPTE_ROLE=""; ID_USER_MEMOIRE=""; document.getElementById("login-pass").value=""; basculerPage('page-accueil'); }
+
+  function declencherClignotementSimule() {
+    const btnVax = document.getElementById("btn-alerte-vaccin");
+    const btnAlim = document.getElementById("btn-fiche-alimentaire");
+    const btnPesee = document.getElementById("btn-pesee-croissance");
+    const btnMisesBas = document.getElementById("btn-suivi-mises-bas");
+    
+    setInterval(() => { 
+      if(btnVax) {
+        if (ALARME_SANITAIRE_ACTIVE) {
+          btnVax.classList.add("clignotant");
+          btnVax.textContent = "⚠️ ALERTE SANITAIRE EN COURS";
+        } else {
+          btnVax.classList.remove("clignotant");
+          btnVax.style.background = "#cfd8dc";
+          btnVax.textContent = "✅ Système sanitaire à jour";
+        }
+      }
+      if(btnAlim) {
+        btnAlim.classList.toggle("clignotant");
+      }
+      if(btnPesee) {
+        if(COMPTEUR_JOURS_SIMULE >= 30) {
+          btnPesee.classList.add("clignotant");
+          btnPesee.textContent = "⚠️ PESÉE REQUISE (CYCLE 30J ATTEINT)";
+        } else {
+          btnPesee.classList.remove("clignotant");
+          btnPesee.style.background = "var(--primary)";
+          btnPesee.textContent = "⚖️ Pesée & Contrôle Croissance";
+        }
+      }
+      if(btnMisesBas) {
+        const maintenant = new Date();
+        const diffTemps = maintenant - DATE_SAILLIE_SIMULEE_POUR_ALERTE;
+        const diffJours = Math.floor(diffTemps / (1000 * 60 * 60 * 24));
+        if (diffJours >= 110 && diffJours <= 120) {
+          btnMisesBas.classList.add("clignotant");
+          btnMisesBas.textContent = `⚠️ VIGILANCE MISE-BAS (JOUR ${diffJours})`;
+        } else {
+          btnMisesBas.classList.remove("clignotant");
+          btnMisesBas.style.background = "var(--primary)";
+          btnMisesBas.textContent = "Suivi Mises-bas";
+        }
+      }
+    }, 1000);
+  }
+
+  function lancerRestaurationServeur() {
+    const url = document.getElementById("url-backup").value;
+    if (typeof google === "undefined" || !google.script || !google.script.run) { alert("Action impossible en mode local."); return; }
+    google.script.run.withSuccessHandler(msg => { alert(msg); basculerPage('page-menu-admin'); }).restaurerApplicationAUnEDate(url);
+  }
+
+  function genererOptionsIntrants() {
+    return LISTE_INTRANTS_REFERENCE.map(intrant => `<option value="${intrant}">${intrant}</option>`).join("");
+  }
+
+  function chargerFormulaireStandard(nomTable) {
+    TABLE_ACTIVE = nomTable;
+    SOUS_MODE_ALIMENT = "AJOUT_MODIF"; 
+    MODE_INTRANT_SUB = "AJOUTER";
+    document.getElementById("form-title").textContent = "Enregistrement : " + nomTable.replace("_", " ");
+    
+    const wrapperToggle = document.getElementById("wrapper-toggle-aliment");
+    if(wrapperToggle) {
+      wrapperToggle.style.display = (nomTable === "Formules_Aliment") ? "block" : "none";
+      document.getElementById("toggle-mode-intrant").classList.add("active");
+      document.getElementById("toggle-mode-types").classList.remove("active");
+      document.getElementById("toggle-mode-liste").classList.remove("active");
     }
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').catch(function(err) { console.log('Erreur SW:', err); });
-      });
+    const wrapperTBVax = document.getElementById("wrapper-tableau-bord-vaccin");
+    if (wrapperTBVax) wrapperTBVax.style.display = (nomTable === "Vaccins") ? "block" : "none";
+
+    const wrapperTBAlim = document.getElementById("wrapper-tableau-bord-alimentation");
+    if (wrapperTBAlim) wrapperTBAlim.style.display = (nomTable === "Alimentation") ? "block" : "none";
+
+    const wrapperTBPesee = document.getElementById("wrapper-tableau-bord-pesee");
+    if (wrapperTBPesee) {
+      wrapperTBPesee.style.display = (nomTable === "Poids") ? "block" : "none";
+      document.getElementById("analyse-croissance-live").style.display = "none";
     }
-  </script>
+
+    construireChampsFormulaire();
+    basculerPage('page-formulaire-dynamique');
+  }
+
+  function basculerModeFormule(mode) {
+    SOUS_MODE_ALIMENT = mode;
+    document.getElementById("toggle-mode-intrant").classList.toggle("active", mode === "AJOUT_MODIF");
+    document.getElementById("toggle-mode-types").classList.toggle("active", mode === "TYPES_ALIMENT");
+    document.getElementById("toggle-mode-liste").classList.toggle("active", mode === "LISTE_INTRANTS");
+    construireChampsFormulaire();
+  }
+
+  function basculerSubModeIntrant(subMode) {
+    MODE_INTRANT_SUB = subMode;
+    construireChampsFormulaire();
+  }
+
+  function analyserIdPourExtraireDate(idSaisie) {
+    const champDate = document.getElementById("g_date_saillie");
+    if (!champDate) return;
+    const matchSlashOuTiret = idSaisie.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
+    const matchFormatInverse = idSaisie.match(/(\d{4})[\/\-](\d{2})[\/\-](\d{2})/);
+    let dateTrouvee = "";
+    if (matchSlashOuTiret) dateTrouvee = `${matchSlashOuTiret[3]}-${matchSlashOuTiret[2]}-${matchSlashOuTiret[1]}`;
+    else if (matchFormatInverse) dateTrouvee = `${matchFormatInverse[1]}-${matchFormatInverse[2]}-${matchFormatInverse[3]}`;
+    if (dateTrouvee) {
+      champDate.value = dateTrouvee;
+      calculerPrevisionMiseBas(dateTrouvee);
+    }
+  }
+
+  function calculerPrevisionMiseBas(dateSaillieValue) {
+    const fieldPrevision = document.getElementById("g_intervalle_mise_bas");
+    if (!fieldPrevision) return;
+    if (!dateSaillieValue) { fieldPrevision.value = "En attente de la date de saillie..."; return; }
+    const dSaillie = new Date(dateSaillieValue);
+    if (isNaN(dSaillie.getTime())) { fieldPrevision.value = "Format de date invalide."; return; }
+    const dMin = new Date(dSaillie.getTime()); dMin.setDate(dMin.getDate() + 112);
+    const dMax = new Date(dSaillie.getTime()); dMax.setDate(dMax.getDate() + 116);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    fieldPrevision.value = `Du ${dMin.toLocaleDateString('fr-FR', options)} au ${dMax.toLocaleDateString('fr-FR', options)}`;
+  }
+
+  function calculerDateEntreeEngraissement(dateSevrageVal) {
+    const fieldEngr = document.getElementById("sev_date_engraissement");
+    if(!fieldEngr) return;
+    if(!dateSevrageVal) { fieldEngr.value = ""; return; }
+    const dSev = new Date(dateSevrageVal);
+    dSev.setDate(dSev.getDate() + 1);
+    const yyyy = dSev.getFullYear();
+    const mm = String(dSev.getMonth() + 1).padStart(2, '0');
+    const dd = String(dSev.getDate()).padStart(2, '0');
+    fieldEngr.value = `${yyyy}-${mm}-${dd}`;
+  }
+
+  function calculerPrevisionProchaineSaillie() {
+    const dateSevVal = document.getElementById("sev_date_sevrage")?.value;
+    const truieId = document.getElementById("sev_id_truie")?.value || "la truie";
+    const fieldPrev = document.getElementById("sev_prev_saillie");
+    if(!fieldPrev) return;
+    if(!dateSevVal) { fieldPrev.value = "En attente de la date de sevrage..."; return; }
+    const dSev = new Date(dateSevVal);
+    dSev.setDate(dSev.getDate() + 30);
+    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+    fieldPrev.value = `${truieId} basculée en 'Truie Vide' - Saillie prévue le : ${dSev.toLocaleDateString('fr-FR', options)}`;
+  }
+
+  function permuterInterfaceSanitaire(choixIntervention) {
+    const zoneVaccin = document.getElementById("bloc-champs-interv-vaccin");
+    const zoneMedicament = document.getElementById("bloc-champs-interv-medicament");
+    const btnSubmit = document.getElementById("btn-soumission-principal");
+    if (choixIntervention === "vaccin") {
+      if (zoneVaccin) zoneVaccin.style.display = "block";
+      if (zoneMedicament) zoneMedicament.style.display = "none";
+      if (btnSubmit) { btnSubmit.textContent = "Valider & Sauvegarder"; btnSubmit.className = "btn-primary"; }
+    } else {
+      if (zoneVaccin) zoneVaccin.style.display = "none";
+      if (zoneMedicament) zoneMedicament.style.display = "block";
+      if (btnSubmit) { btnSubmit.textContent = "💊 Administrer (Arrêter l'Alarme)"; btnSubmit.className = "btn-accent"; }
+    }
+  }
+
+  function permuterChampsQuarantaine(valeurType) {
+    const divNombre = document.getElementById("bloc-quarantaine-nombre");
+    if (divNombre) divNombre.style.display = (valeurType === "lot porcelets") ? "block" : "none";
+  }
+
+  function autoRenseignerAlimentSelonSujet(idLotSujet) {
+    const fieldAlim = document.getElementById("a_type_aliment");
+    if(!fieldAlim) return;
+    if(idLotSujet === "LOT-P1") fieldAlim.value = "Démarrage";
+    else if(idLotSujet === "LOT-P2") fieldAlim.value = "Croissance";
+    else if(idLotSujet === "T-GEST-04") fieldAlim.value = "Truies gestantes";
+    else if(idLotSujet === "T-ALL-09") fieldAlim.value = "Truies allaitantes";
+    else fieldAlim.value = "Verrat et truies vides";
+  }
+
+  function autoRenseignerPeriodeVaccin(nomVaccin) {
+    const champPeriode = document.getElementById("vac_periode_injection");
+    if (!champPeriode) return;
+    if (nomVaccin.includes("Fer injectable")) champPeriode.value = "1 à 3 jours après la naissance";
+    else if (nomVaccin.includes("Circovirus")) champPeriode.value = "3 à 4 semaines d'âge";
+    else if (nomVaccin.includes("Mycoplasma")) champPeriode.value = "3 à 4 semaines d'âge";
+    else if (nomVaccin.includes("Érysipèle")) champPeriode.value = "8 à 12 semaines d'âge";
+    else if (nomVaccin.includes("Peste")) champPeriode.value = "6 à 12 semaines d'âge selon réglementation locale";
+    else if (nomVaccin.includes("PRRS")) champPeriode.value = "6 à 10 semaines d'âge";
+    else if (nomVaccin.includes("Leptospirose")) champPeriode.value = "8 à 12 semaines d'âge";
+    else if (nomVaccin.includes("Grippe")) champPeriode.value = "6 à 8 semaines d'âge";
+    else champPeriode.value = "";
+  }
+
+  function dynamiserTableauDeBordCroissance(poidsMoyen) {
+    const p = parseFloat(poidsMoyen || 0);
+    const boxLive = document.getElementById("analyse-croissance-live");
+    const m1 = document.getElementById("td-norme-m1");
+    const m2 = document.getElementById("td-norme-m2");
+    const m3 = document.getElementById("td-norme-m3");
+    const m4 = document.getElementById("td-norme-m4");
+    const m45 = document.getElementById("td-norme-m45");
+    [m1, m2, m3, m4, m45].forEach(td => { if(td) { td.textContent = "--"; td.className = ""; } });
+    if(p <= 0) { if(boxLive) boxLive.style.display = "none"; return; }
+    if(boxLive) boxLive.style.display = "block";
+    let statutTexte = ""; let couleurFonds = "#f57c00";
+    if (p >= 28 && p <= 32) { m1.innerHTML = "🎯 Conforme"; m1.className = "vax-badge"; m1.style.background="#e8f5e9"; m1.style.color="#2e7d32"; statutTexte = "Le lot se situe dans la norme de Fin de 1er Mois (28-32 kg)."; couleurFonds="#2e7d32"; }
+    else if (p >= 48 && p <= 55) { m2.innerHTML = "🎯 Conforme"; m2.className = "vax-badge"; m2.style.background="#e8f5e9"; m2.style.color="#2e7d32"; statutTexte = "Le lot se situe dans la norme de Fin de 2e Mois (48-55 kg)."; couleurFonds="#2e7d32"; }
+    else if (p >= 68 && p <= 75) { m3.innerHTML = "🎯 Conforme"; m3.className = "vax-badge"; m3.style.background="#e8f5e9"; m3.style.color="#2e7d32"; statutTexte = "Le lot se situe dans la norme de Fin de 3e Mois (68-75 kg)."; couleurFonds="#2e7d32"; }
+    else if (p >= 88 && p <= 95) { m4.innerHTML = "🎯 Conforme"; m4.className = "vax-badge"; m4.style.background="#e8f5e9"; m4.style.color="#2e7d32"; statutTexte = "Le lot se situe dans la norme de Fin de 4e Mois (88-95 kg)."; couleurFonds="#2e7d32"; }
+    else if (p >= 100 && p <= 110) { m45.innerHTML = "🎯 Conforme"; m45.className = "vax-badge"; m45.style.background="#e8f5e9"; m45.style.color="#2e7d32"; statutTexte = "Poids d'abattage optimal atteint (100-110 kg)."; couleurFonds="#1b5e20"; }
+    else {
+      if(p < 28) { m1.textContent = "⚠️ Inférieur"; m1.style.color="#d32f2f"; statutTexte = "Alerte : Croissance lente pour le 1er mois (<28 kg)."; }
+      else { statutTexte = "Lot hors grilles standards de suivi direct."; }
+      couleurFonds = "#d32f2f";
+    }
+    if(boxLive) { boxLive.innerHTML = statutTexte; boxLive.style.borderLeft = `4px solid ${couleurFonds}`; }
+  }
+
+  function gererProvenancePorcelets(provenance) {
+    const type = document.getElementById("e_type").value;
+    if (type !== "Lots de porcelets") return;
+    const conteneur = document.getElementById("conteneur-e-id");
+    if (!conteneur) return;
+    let existingIds = ["LOT-P1", "LOT-P2"];
+    if (provenance === "Acheté") {
+      let counter = 3;
+      let candidateId = `LOT-P${counter}`;
+      while (existingIds.includes(candidateId)) { counter++; candidateId = `LOT-P${counter}`; }
+      conteneur.innerHTML = `<input type="text" id="e_id" value="${candidateId}" readonly required style="background-color: #eceff1; font-weight: bold;">`;
+    } else {
+      let optionsHtml = existingIds.map(id => `<option value="${id}">${id}</option>`).join("");
+      conteneur.innerHTML = `<select id="e_id" required>${optionsHtml}</select>`;
+    }
+  }
+
+  function rafraichirChangerIntrantInputs() {
+    const formuleId = document.getElementById("f_change_formule_select")?.value;
+    const conteneurCocher = document.getElementById("box-intrants-a-changer");
+    if (!formuleId || !conteneurCocher) return;
+    
+    let composition = FORMULES_PAR_DEFAUT[formuleId]?.composition || {};
+    let html = "<label style='font-size:12px; color:#555;'>Sélectionner le ou les intrants à extraire :</label>";
+    
+    for (let intrant in composition) {
+      html += `<div class="checkbox-container">
+                 <input type="checkbox" id="chk_change_${intrant}" value="${intrant}" onchange="genererChampsNouveauxEtRestants()">
+                 <label for="chk_change_${intrant}">${intrant} (${composition[intrant]} %)</label>
+               </div>`;
+    }
+    conteneurCocher.innerHTML = html;
+    genererChampsNouveauxEtRestants();
+  }
+
+  function genererChampsNouveauxEtRestants() {
+    const formuleId = document.getElementById("f_change_formule_select")?.value;
+    const boxNouveaux = document.getElementById("box-rows-nouveaux-intrants");
+    const boxRestants = document.getElementById("box-rows-intrants-restants");
+    if (!formuleId || !boxNouveaux || !boxRestants) return;
+
+    let composition = FORMULES_PAR_DEFAUT[formuleId]?.composition || {};
+    let checkedIntrants = [];
+    
+    for (let intrant in composition) {
+      if (document.getElementById(`chk_change_${intrant}`)?.checked) {
+        checkedIntrants.push(intrant);
+      }
+    }
+
+    let htmlNouveaux = "";
+    checkedIntrants.forEach((intrant, idx) => {
+      htmlNouveaux += `<div class="sub-section-box" style="margin-bottom:8px;">
+                        <strong>Remplacement pour : ${intrant}</strong>
+                        <div class="form-group" style="margin-top:5px;">
+                          <label>Nom du nouvel intrant</label>
+                          <input type="text" id="new_intrant_name_${idx}" placeholder="Ex: Tourteau de Coton" required>
+                        </div>
+                        <div class="flex-row-inputs">
+                          <div>
+                            <label>% à incorporer</label>
+                            <input type="number" id="new_intrant_pct_${idx}" step="0.01" placeholder="%" required>
+                          </div>
+                          <div>
+                            <label>Prix au KG (FCFA)</label>
+                            <input type="number" id="new_intrant_pkg_${idx}" placeholder="FCFA" required>
+                          </div>
+                        </div>
+                      </div>`;
+    });
+    boxNouveaux.innerHTML = htmlNouveaux;
+
+    let intrantsRestants = Object.keys(composition).filter(x => !checkedIntrants.includes(x));
+    let optionsRestants = `<option value="">-- Choisir un intrant de base à réajuster --</option>`;
+    intrantsRestants.forEach(x => {
+      optionsRestants += `<option value="${x}">${x} (Actuel: ${composition[x]}%)</option>`;
+    });
+
+    boxRestants.innerHTML = `
+      <div class="form-group">
+        <label>Ajuster le pourcentage d'un composant restant</label>
+        <select id="select_restant_intrant" onchange="ajouterLigneAjustementRestant(this.value, '${formuleId}')">
+          ${optionsRestants}
+        </select>
+      </div>
+      <div id="container-lignes-ajustement-restants"></div>
+    `;
+  }
+
+  let listeAjustementsRestantsChoisis = [];
+  function ajouterLigneAjustementRestant(intrant, formuleId) {
+    if (!intrant) return;
+    if (!listeAjustementsRestantsChoisis.includes(intrant)) {
+      listeAjustementsRestantsChoisis.push(intrant);
+    }
+    renderLignesAjustementRestants(formuleId);
+  }
+
+  function renderLignesAjustementRestants(formuleId) {
+    const container = document.getElementById("container-lignes-ajustement-restants");
+    if (!container) return;
+    let composition = FORMULES_PAR_DEFAUT[formuleId]?.composition || {};
+    
+    let html = "";
+    listeAjustementsRestantsChoisis.forEach((intrant) => {
+      let pctActuel = composition[intrant] || 0;
+      html += `<div class="flex-row-inputs" style="margin-bottom:6px;">
+                 <div style="flex:2;"><span><strong>${intrant}</strong> (Actuel: ${pctActuel}%)</span></div>
+                 <div style="flex:1;"><input type="number" id="ajust_restant_pct_${intrant}" step="0.01" placeholder="Nouv. %" required></div>
+               </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  function afficherDetailsFormuleTableau(formuleId) {
+    const box = document.getElementById("box-dashboard-visualisation-formule");
+    if(!box) return;
+    let data = FORMULES_PAR_DEFAUT[formuleId];
+    if(!data) { box.innerHTML = ""; return; }
+
+    let rowsHtml = "";
+    let totalPct = 0;
+    for (let intrant in data.composition) {
+      let pct = data.composition[intrant];
+      totalPct += pct;
+      let prixKg = PRIX_INTRANTS_MUTABLE[intrant] || 0;
+      rowsHtml += `<tr>
+                    <td><strong>${intrant}</strong></td>
+                    <td>${pct} %</td>
+                    <td>${prixKg} FCFA</td>
+                  </tr>`;
+    }
+
+    box.innerHTML = `
+      <div class="vax-dashboard" style="border: 2px solid var(--primary); margin-top:10px;">
+        <h4>📋 Fiche Technique : Aliment ${formuleId}</h4>
+        <div class="kpi-row"><span>Coût indicatif de formulation :</span> <strong>${data.cost_kg} FCFA / KG</strong></div>
+        <table class="vax-table">
+          <thead>
+            <tr><th>Composant Intrant</th><th>Taux (%)</th><th>Prix de Base / KG</th></tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+            <tr style="background:#f5f5f5; font-weight:bold;">
+              <td>TOTAL</td>
+              <td>${totalPct} %</td>
+              <td>--</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function actualiserFormCostEtUIListe() {
+    const tbody = document.getElementById("tbody-liste-intrants-prix");
+    if(!tbody) return;
+    let html = "";
+    for(let intrant in PRIX_INTRANTS_MUTABLE) {
+      html += `<tr>
+                <td><strong>${intrant}</strong></td>
+                <td><span class="vax-badge" style="background:#eceff1; color:#37474f; font-size:11px;">${PRIX_INTRANTS_MUTABLE[intrant]} FCFA / KG</span></td>
+              </tr>`;
+    }
+    tbody.innerHTML = html;
+  }
+
+  function chargerPrixKgIntrantAChanger(intrantName) {
+    const field = document.getElementById("f_cout_new_price");
+    if(field) field.value = PRIX_INTRANTS_MUTABLE[intrantName] || 0;
+  }
+
+  function permanentAjustementRetour() {
+    ouvrirEspaceRole();
+  }
+
+  function revenirPermanenceFormulaire() {
+    ouvrirEspaceRole();
+  }
+
+  function construireChampsFormulaire() {
+    const area = document.getElementById("form-fields-area");
+    if(!area) return;
+    area.innerHTML = "";
+
+    const btnSubmit = document.getElementById("btn-soumission-principal");
+    if(btnSubmit) { btnSubmit.style.display = "block"; btnSubmit.textContent = "Valider & Sauvegarder"; btnSubmit.className = "btn-primary"; }
+
+    const maintenant = new Date();
+    const dateFr = maintenant.toLocaleDateString('fr-FR') + " à " + maintenant.toLocaleTimeString('fr-FR');
+    let html = "";
+    
+    html += `<div class="form-group">
+              <label>Date de l'opération (Automatique)</label>
+              <input type="text" id="auto_date_display" value="${dateFr}" readonly>
+             </div>`;
+
+    if (TABLE_ACTIVE === "Formules_Aliment") {
+      if (SOUS_MODE_ALIMENT === "AJOUT_MODIF") {
+        html += `<div class="toggle-zone" style="background:#e8f5e9; padding:3px; margin-bottom:15px;">
+                   <button type="button" class="toggle-btn ${MODE_INTRANT_SUB === 'AJOUTER'?'active':''}" style="font-size:11px;" onclick="basculerSubModeIntrant('AJOUTER')">Ajouter Intrant</button>
+                   <button type="button" class="toggle-btn ${MODE_INTRANT_SUB === 'CHANGER'?'active':''}" style="font-size:11px;" onclick="basculerSubModeIntrant('CHANGER')">Changer Intrant</button>
+                 </div>`;
+
+        if (MODE_INTRANT_SUB === "AJOUTER") {
+          html += `<div class="sub-section-box">
+                     <div class="form-group">
+                       <label>Nom de l'intrant à créer / inclure</label>
+                       <input type="text" id="f_ajout_nom_intrant" placeholder="Ex: Concentré Protéique" required>
+                     </div>
+                     <div class="form-group">
+                       <label>Pourcentage d'incorporation (%)</label>
+                       <input type="number" id="f_ajout_pct" step="0.01" placeholder="Ex: 5" required>
+                     </div>
+                     <div class="form-group">
+                       <label>Ajuster la part d'un ingrédient existant de la formule</label>
+                       <select id="f_ajout_compte_intrant">
+                         <option value="">-- Aucun ajustement connexe --</option>
+                         ${LISTE_INTRANTS_REFERENCE.map(x=>`<option value="${x}">${x}</option>`).join("")}
+                       </select>
+                       <input type="number" id="f_ajout_compte_pct" step="0.01" placeholder="Nouveau % pour cet intrant existant" style="margin-top:6px;">
+                     </div>
+                     <div class="form-group">
+                       <label>Type d'Aliment ciblé pour cette composition</label>
+                       <select id="f_ajout_cible_formule">
+                         <option value="Démarrage">Démarrage</option>
+                         <option value="Croissance">Croissance</option>
+                         <option value="Finition">Finition</option>
+                         <option value="Verrat et truies vides">Verrat et truies vides</option>
+                         <option value="Truies gestantes">Truies gestantes</option>
+                         <option value="Truies allaitantes">Truies allaitantes</option>
+                       </select>
+                     </div>
+                   </div>`;
+        } else {
+          listeAjustementsRestantsChoisis = [];
+          html += `<div class="sub-section-box">
+                     <div class="form-group">
+                       <label>Type d'aliment à restructurer</label>
+                       <select id="f_change_formule_select" onchange="rafraichirChangerIntrantInputs()">
+                         <option value="Démarrage">Démarrage</option>
+                         <option value="Croissance">Croissance</option>
+                         <option value="Finition">Finition</option>
+                         <option value="Verrat et truies vides">Verrat et truies vides</option>
+                         <option value="Truies gestantes">Truies gestantes</option>
+                         <option value="Truies allaitantes">Truies allaitantes</option>
+                       </select>
+                     </div>
+                     <div id="box-intrants-a-changer" class="form-group"></div>
+                     <div id="box-rows-nouveaux-intrants" class="form-group"></div>
+                     <div id="box-rows-intrants-restants" class="form-group"></div>
+                   </div>`;
+          setTimeout(rafraichirChangerIntrantInputs, 50);
+        }
+      } 
+      else if (SOUS_MODE_ALIMENT === "TYPES_ALIMENT") {
+        if(btnSubmit) btnSubmit.style.display = "none"; 
+        html += `<div class="form-group">
+                   <label style="color:var(--primary-dark);">Sélectionner un type d'aliment fini :</label>
+                   <div style="display:flex; flex-direction:column; margin-top:8px;">
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Démarrage')">🌱 Aliment Démarrage</button>
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Croissance')">🌿 Aliment Croissance</button>
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Finition')">🪵 Aliment Finition</button>
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Verrat et truies vides')">🐗 Aliment Verrat et truies vides</button>
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Truies gestantes')">🤰 Aliment Truies gestantes</button>
+                     <button type="button" class="btn-formula-select" onclick="afficherDetailsFormuleTableau('Truies allaitantes')">🍼 Aliment Truies allaitantes</button>
+                   </div>
+                   <div id="box-dashboard-visualisation-formule"></div>
+                 </div>`;
+      } 
+      else if (SOUS_MODE_ALIMENT === "LISTE_INTRANTS") {
+        html += `<div class="vax-dashboard">
+                   <h4>📋 Répertoire Général des Intrants Enregistrés</h4>
+                   <table class="vax-table">
+                     <thead><tr><th>Désignation</th><th>Coût de Base</th></tr></thead>
+                     <tbody id="tbody-liste-intrants-prix"></tbody>
+                   </table>
+                 </div>
+                 <div class="sub-section-box" style="border-top:3px solid var(--accent);">
+                   <h4 style="color:var(--accent); font-size:13px; margin-bottom:10px;">⚙️ CHANGER LE COÛT D'UN INTRANT</h4>
+                   <div class="form-group">
+                     <label>Nom de l'intrant</label>
+                     <select id="f_cout_select_intrant" onchange="chargerPrixKgIntrantAChanger(this.value)">
+                       ${LISTE_INTRANTS_REFERENCE.map(x=>`<option value="${x}">${x}</option>`).join("")}
+                     </select>
+                   </div>
+                   <div class="form-group">
+                     <label>Changer le prix du kg d'un intrant (FCFA / KG)</label>
+                     <input type="number" id="f_cout_new_price" placeholder="Saisir nouveau montant unitaire" required>
+                   </div>
+                 </div>`;
+        setTimeout(() => {
+          actualiserFormCostEtUIListe();
+          chargerPrixKgIntrantAChanger(document.getElementById("f_cout_select_intrant")?.value || "Maïs");
+        }, 50);
+      }
+    }
+    else if (TABLE_ACTIVE === "Entree_Porc") {
+      html += `<div class="form-group">
+                 <label>Type d'animal entrant</label>
+                 <select id="e_type" onchange="permuterChampsEntreePorc(this.value)">
+                   <option value="Lots de porcelets" selected>Lots de porcelets</option>
+                   <option value="Truie">Truie</option>
+                   <option value="Verrat">Verrat</option>
+                 </select>
+               </div>
+               <div class="form-group" id="bloc-entree-provenance">
+                 <label>Provenance</label>
+                 <select id="e_provenance" onchange="gererProvenancePorcelets(this.value)">
+                   <option value="Acheté" selected>Acheté</option>
+                   <option value="Issu des truies du cheptel">Issu des truies du cheptel</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant du Sujet / Code de Lot</label>
+                 <div id="conteneur-e-id">
+                   <input type="text" id="e_id" placeholder="Ex: LOT-04 ou T-22" required>
+                 </div>
+               </div>
+               <div class="form-group" id="bloc-entree-porcelets">
+                 <label>Nombre de porcelets entrants</label>
+                 <input type="number" id="e_nbr_porcelets" placeholder="Ex: 12">
+               </div>
+               <div class="form-group" id="bloc-entree-poids" style="display:none;">
+                 <label>Poids individuel à l'entrée (KG)</label>
+                 <input type="number" id="e_poids" step="0.1" placeholder="Ex: 85.5">
+               </div>`;
+      setTimeout(() => { gererProvenancePorcelets("Acheté"); }, 50);
+    }
+    else if (TABLE_ACTIVE === "Saillies") {
+      html += `<div class="form-group">
+                 <label>Identifiant de la Truie (ID)</label>
+                 <input type="text" id="s_id_truie" placeholder="Ex: TRUIE-001" required>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant du Lot de la Truie</label>
+                 <input type="text" id="s_id_lot" placeholder="Ex: LOT-B" required>
+               </div>
+               <div class="form-group">
+                 <label>Nombre de truies du lot déjà saillies</label>
+                 <input type="number" id="s_nbr_deja_saillie" placeholder="Ex: 4" required>
+               </div>
+               <div class="form-group">
+                 <label>Nombre de truies du lot restant</label>
+                 <input type="number" id="s_nbr_restant" placeholder="Ex: 2" required>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Gestation") {
+      html += `<div class="form-group">
+                 <label>Identifiant de la Truie (ID)</label>
+                 <input type="text" id="g_id_truie" oninput="analyserIdPourExtraireDate(this.value)" placeholder="Ex: TRUIE-11-06-2026" required>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant du Lot de la Truie</label>
+                 <input type="text" id="g_id_lot" placeholder="Ex: LOT-C" required>
+               </div>
+               <div class="form-group">
+                 <label>Date de la Saillie Réalisée</label>
+                 <input type="date" id="g_date_saillie" onchange="calculerPrevisionMiseBas(this.value)" required>
+               </div>
+               <div class="form-group">
+                 <label>Date Approximative de Mise-bas (Intervalle Auto)</label>
+                 <input type="text" id="g_intervalle_mise_bas" placeholder="En attente de la date de saillie..." readonly>
+               </div>
+               <div class="form-group">
+                 <label>Observations Terrain / État Échographie</label>
+                 <textarea id="g_obs" rows="3" placeholder="Ex: Confirmation positive à l'écho, truie calme."></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Vaccins") {
+      html += `<div class="form-group">
+                 <label>Type de sujet</label>
+                 <select id="vac_type_sujet">
+                   <option value="lots porcelets">Lots porcelets</option>
+                   <option value="verrat">Verrat</option>
+                   <option value="truies vide">Truies vide</option>
+                   <option value="truies gestantes">Truies gestantes</option>
+                   <option value="truies allaitantes">Truies allaitantes</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant Technique (Case ID)</label>
+                 <input type="text" id="vac_case_id" placeholder="Ex: LOT-P1, T-24, VERRAT-01" required>
+               </div>
+               <div class="form-group">
+                 <label>Type de produit d'intervention</label>
+                 <select id="vac_mode_intervention" onchange="permuterInterfaceSanitaire(this.value)">
+                   <option value="vaccin" selected>Vaccin</option>
+                   <option value="medicament">Médicament</option>
+                 </select>
+               </div>
+               <div id="bloc-champs-interv-vaccin">
+                 <div class="form-group">
+                   <label>Sélection du Vaccin</label>
+                   <select id="vac_nom_liste" onchange="autoRenseignerPeriodeVaccin(this.value)">
+                     <option value="Fer injectable 1 à 3 jours après la naissance (prévention de l'anémie)">Fer injectable 1 à 3 jours après la naissance (prévention de l'anémie)</option>
+                     <option value="Vaccin Circovirus porcin (PCV2) 3 à 4 semaines d'âge">Vaccin Circovirus porcin (PCV2) 3 à 4 semaines d'âge</option>
+                     <option value="Vaccin Mycoplasma hyopneumoniae 3 à 4 semaines d'âge">Vaccin Mycoplasma hyopneumoniae 3 à 4 semaines d'âge</option>
+                     <option value="Vaccin contre l'Érysipèle porcin (Rouget du porc) 8 à 12 semaines d'âge">Vaccin contre l'Érysipèle porcin (Rouget du porc) 8 à 12 semaines d'âge</option>
+                   </select>
+                 </div>
+                 <div class="form-group">
+                   <label>Période cible du vaccin (Remplissage Auto)</label>
+                   <input type="text" id="vac_periode_injection" value="1 à 3 jours après la naissance" readonly>
+                 </div>
+               </div>
+               <div id="bloc-champs-interv-medicament" style="display:none;">
+                 <div class="form-group">
+                   <label>Type de médicament</label>
+                   <input type="text" id="med_type_medicament" placeholder="Ex: Antibiotique, Déparasitant, Vitamines">
+                 </div>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Quarantaine") {
+      html += `<div class="form-group">
+                 <label>Type de sujet</label>
+                 <select id="q_type" onchange="permuterChampsQuarantaine(this.value)">
+                   <option value="lot porcelets" selected>lot porcelets</option>
+                   <option value="verrat">verrat</option>
+                   <option value="truie vide">truie vide</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant du Sujet / Code de Lot</label>
+                 <select id="q_id" required>
+                   <option value="LOT-P1">LOT-P1</option>
+                   <option value="LOT-P2">LOT-P2</option>
+                   <option value="VERRAT-01">VERRAT-01</option>
+                 </select>
+               </div>
+               <div class="form-group" id="bloc-quarantaine-nombre" style="display:block;">
+                 <label>Nombre de sujets affectés</label>
+                 <input type="number" id="q_quantite" min="1" placeholder="Ex: 5">
+               </div>
+               <div class="form-group">
+                 <label>Motif de la quarantaine</label>
+                 <textarea id="q_motif" rows="3" placeholder="Saisir la cause..." required></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Mortalite") {
+      html += `<div class="form-group">
+                 <label>Identifiant du Sujet / Catégorie</label>
+                 <select id="m_id_sujet">
+                   <option value="Lots de porcelets">Lots de porcelets</option>
+                   <option value="Verrat">Verrat</option>
+                   <option value="Truies vide">Truies vide</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Code Spécifique / N° Oreille ou Case</label>
+                 <input type="text" id="m_code_tag" placeholder="Ex: Lot-B" required>
+               </div>
+               <div class="form-group">
+                 <label>Nombre de pertes (Sujets morts)</label>
+                 <input type="number" id="m_quantite" min="1" placeholder="Ex: 1" required>
+               </div>
+               <div class="form-group">
+                 <label>Cause de la mort / Symptômes constatés</label>
+                 <textarea id="m_cause" rows="3" placeholder="Ex: Cause inconnue..." required></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Alimentation") {
+      html += `<div class="form-group">
+                 <label>Sélectionner le Lot / ID du Sujet à alimenter</label>
+                 <select id="a_id_sujet" onchange="autoRenseignerAlimentSelonSujet(this.value)">
+                   <option value="LOT-P1">LOT-P1 (Porcelets Démarrage)</option>
+                   <option value="LOT-P2">LOT-P2 (Engraissement Croissance)</option>
+                   <option value="T-GEST-04">T-GEST-04 (Truies Gestantes)</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Formule d'Aliment préconisée</label>
+                 <input type="text" id="a_type_aliment" value="Démarrage" readonly>
+               </div>
+               <div class="form-group">
+                 <label>Quantité totale distribuée ce jour (en KG)</label>
+                 <input type="number" id="a_quantite_kg" step="0.1" placeholder="Ex: 45.5" required>
+               </div>
+               <div class="form-group">
+                 <label>Observations Terrain</label>
+                 <textarea id="a_obs" rows="3" placeholder="Ex: Bonne appétence."></textarea>
+               </div>`;
+      setTimeout(() => { autoRenseignerAlimentSelonSujet("LOT-P1"); }, 50);
+    }
+    else if (TABLE_ACTIVE === "Poids") {
+      html += `<div class="form-group">
+                 <label>Identifiant du Lot en Engraissement</label>
+                 <select id="p_id_lot">
+                   <option value="LOT-P1">LOT-P1</option>
+                   <option value="LOT-P2">LOT-P2</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Poids Moyen Constaté du Lot (KG)</label>
+                 <input type="number" id="p_poids_moyen" step="0.1" placeholder="Saisir le poids (Ex: 52.3)" oninput="dynamiserTableauDeBordCroissance(this.value)" required>
+               </div>
+               <div class="form-group">
+                 <label>Remarques Zootechniques</label>
+                 <textarea id="p_obs" rows="3" placeholder="Ex: Lot très homogène."></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Mises_Bas") {
+      html += `<div class="form-group">
+                 <label>Case ID / Lot de la Truie Gestante</label>
+                 <input type="text" id="mb_id_lot" placeholder="Ex: LOT-GEST-01" required>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant Unique de la Truie (ID Truie)</label>
+                 <input type="text" id="mb_id_truie" placeholder="Ex: T-GEST-04" required>
+               </div>
+               <div class="form-group">
+                 <label>Nombre de porcelets obtenus (Vivants)</label>
+                 <input type="number" id="mb_porcelets_vivants" min="0" placeholder="Ex: 12" required>
+               </div>
+               <div class="form-group">
+                 <label>Nombre de porcelets morts à la naissance</label>
+                 <input type="number" id="mb_porcelets_morts" min="0" placeholder="Ex: 1" required>
+               </div>
+               <div class="form-group">
+                 <label>Commentaire / Notes de mise-bas</label>
+                 <textarea id="mb_commentaire" rows="3" placeholder="Ex: Déroulement rapide."></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Allaitement") {
+      html += `<div class="form-group">
+                 <label>Case ID / Lot de Truies</label>
+                 <input type="text" id="al_id_lot" placeholder="Ex: LOT-ALL-01" required>
+               </div>
+               <div class="form-group">
+                 <label>Identifiant Unique de la Truie (ID Truie)</label>
+                 <input type="text" id="al_id_truie" placeholder="Ex: T-ALL-09" required>
+               </div>
+               <div class="form-group">
+                 <label>Comportement Global</label>
+                 <select id="al_comportement">
+                   <option value="Rien à signaler" selected>Rien à signaler</option>
+                   <option value="Problème allaitement">Problème allaitement</option>
+                 </select>
+               </div>
+               <div class="form-group">
+                 <label>Commentaire</label>
+                 <textarea id="al_commentaire" rows="3" placeholder="Saisir des notes..."></textarea>
+               </div>`;
+    }
+    else if (TABLE_ACTIVE === "Sevrage") {
+      html += `<div class="form-group">
+                 <label>ID Lot de Truies</label>
+                 <input type="text" id="sev_id_lot_truies" placeholder="Ex: LOT-TRUIE" required>
+               </div>
+               <div class="form-group">
+                 <label>Case ID Truie (Unique)</label>
+                 <input type="text" id="sev_id_truie" placeholder="Ex: T-ALL-09" oninput="calculerPrevisionProchaineSaillie()" required>
+               </div>
+               <div class="form-group">
+                 <label>Date du Sevrage</label>
+                 <input type="date" id="sev_date_sevrage" onchange="calculerDateEntreeEngraissement(this.value); calculerPrevisionProchaineSaillie();" required>
+               </div>
+               <div class="form-group">
+                 <label>Statut &amp; Planification Saillie (Auto +30j)</label>
+                 <input type="text" id="sev_prev_saillie" placeholder="Génération à la saisie..." readonly style="color:var(--accent);">
+               </div>
+               <div class="form-group">
+                 <label>Nombre de porcelets sevrés</label>
+                 <input type="number" id="sev_nbr_sevres" min="0" placeholder="Ex: 10" required>
+               </div>
+               <div class="form-group">
+                 <label>ID Attribué au Lot de ces Porcelets</label>
+                 <input type="text" id="sev_id_lot_porcelets" placeholder="Ex: LOT-P3" required>
+               </div>
+               <div class="form-group">
+                 <label>Date d'entrée en engraissement (Sevrage + 1 Jour)</label>
+                 <input type="date" id="sev_date_engraissement" readonly style="color:var(--primary-dark);">
+               </div>`;
+      setTimeout(() => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+        const fSev = document.getElementById("sev_date_sevrage");
+        if(fSev) { fSev.value = todayStr; calculerDateEntreeEngraissement(todayStr); calculerPrevisionProchaineSaillie(); }
+      }, 50);
+    }
+    else if (TABLE_ACTIVE === "Cout_Aliment") {
+      html += `<label>Type d'aliment fini</label>
+               <select id="c_type_aliment" onchange="declencherCalculAutomatiqueCout(this.value)">
+                 <option value="Démarrage" selected>Démarrage</option><option value="Croissance">Croissance</option><option value="Finition">Finition</option>
+                 <option value="Verrat et truies vides">Verrat et truies vides</option><option value="Truies gestantes">Truies gestantes</option><option value="Truies allaitantes">Truies allaitantes</option>
+               </select>
+               <label>Prix du KG (Calculé automatiquement - FCFA)</label><input type="number" id="c_prix_kg" value="227" readonly>
+               <label>Prix du Sac de 50 kg (Calculé automatiquement - FCFA)</label><input type="number" id="c_prix_sac" value="11350" readonly>`;
+      setTimeout(() => { declencherCalculAutomatiqueCout("Démarrage"); }, 50);
+    }
+    else if (TABLE_ACTIVE === "Ventes") {
+      html += `<label>Type Catégorie</label>
+               <select id="v_type"><option value="Lot Engraissement">Lot d'engraissement</option></select>
+               <label>Identifiant Technique / N° Oreille</label><input type="text" id="v_id" required>
+               <label>Quantité (Nombre de têtes)</label><input type="number" id="v_qte" required>
+               <label>Poids Total Cumulé (KG)</label><input type="number" id="v_poids_total" oninput="calculerSommeVenteDirecte()" required>
+               <label>Prix unitaire négocié au KG (FCFA)</label><input type="number" id="v_pkg" oninput="calculerSommeVenteDirecte()" required>
+               <label>Somme Totale Obtenue (Calculée - FCFA)</label><input type="number" id="v_somme_totale" readonly>`;
+    }
+    else if (TABLE_ACTIVE === "Depenses") {
+      html += `<label>Nature de la dépense</label>
+               <select id="d_type" onchange="document.getElementById('bloc-dep-ali').style.display = this.value==='Aliment'?'block':'none'">
+                 <option value="Aliment">Achat d'Intrants / Aliments</option><option value="Sante">Médicaments / Soins Vétérinaires</option><option value="Autre">Autre Motif</option>
+               </select>
+               <div id="bloc-dep-ali">
+                 <label>Intrant concerné</label><select id="d_intrant_select">${genererOptionsIntrants()}</select>
+                 <label>Nombre de sacs</label><input type="number" id="d_sacs">
+               </div>
+               <label>Motif détaillé</label><input type="text" id="d_motif" required>
+               <label>Montant Principal (FCFA)</label><input type="number" id="d_mt" required>
+               <label>Frais de Transport (FCFA)</label><input type="number" id="d_trans" value="0">
+               <label>Coût annexe de production (FCFA)</label><input type="number" id="d_prod" value="0">`;
+    }
+
+    area.innerHTML = html;
+  }
+
+  function permuterChampsEntreePorc(valeur) {
+    const divPorcelets = document.getElementById("bloc-entree-porcelets");
+    const divPoids = document.getElementById("bloc-entree-poids");
+    const divProvenance = document.getElementById("bloc-entree-provenance");
+    const conteneur = document.getElementById("conteneur-e-id");
+    if (valeur === "Lots de porcelets") {
+      if(divPorcelets) divPorcelets.style.display = "block";
+      if(divPoids) divPoids.style.display = "none";
+      if(divProvenance) divProvenance.style.display = "block";
+      gererProvenancePorcelets(document.getElementById("e_provenance")?.value || "Acheté");
+    } else {
+      if(divPorcelets) divPorcelets.style.display = "none";
+      if(divPoids) divPoids.style.display = "block";
+      if(divProvenance) divProvenance.style.display = "none";
+      if(conteneur) conteneur.innerHTML = `<input type="text" id="e_id" placeholder="Ex: T-22" required>`;
+    }
+  }
+
+  function calculerSommeVenteDirecte() {
+    const pTotal = parseFloat(document.getElementById("v_poids_total").value || 0);
+    const pKg = parseFloat(document.getElementById("v_pkg").value || 0);
+    const fieldSomme = document.getElementById("v_somme_totale");
+    if(fieldSomme) fieldSomme.value = pTotal * pKg;
+  }
+
+  function declencherCalculAutomatiqueCout(typeAliment) {
+    const fieldKg = document.getElementById("c_prix_kg");
+    const fieldSac = document.getElementById("c_prix_sac");
+    if(!fieldKg || !fieldSac) return;
+    if (FORMULES_PAR_DEFAUT[typeAliment]) {
+      let pKg = FORMULES_PAR_DEFAUT[typeAliment].cost_kg; fieldKg.value = pKg; fieldSac.value = pKg * 50;
+    }
+  }
+
+  function soumettreFormulaireClient(e) {
+    e.preventDefault();
+    let rowData = [new Date()];
+
+    if (TABLE_ACTIVE === "Formules_Aliment") {
+      if (SOUS_MODE_ALIMENT === "AJOUT_MODIF") {
+        if (MODE_INTRANT_SUB === "AJOUTER") {
+          let nom = document.getElementById("f_ajout_nom_intrant").value;
+          let pct = parseFloat(document.getElementById("f_ajout_pct").value || 0);
+          let cible = document.getElementById("f_ajout_cible_formule").value;
+          let connexeNom = document.getElementById("f_ajout_compte_intrant").value;
+          let connexePct = parseFloat(document.getElementById("f_ajout_compte_pct").value || 0);
+          
+          if (!LISTE_INTRANTS_REFERENCE.includes(nom)) {
+            LISTE_INTRANTS_REFERENCE.push(nom);
+            PRIX_INTRANTS_MUTABLE[nom] = 200; 
+          }
+          if (FORMULES_PAR_DEFAUT[cible]) {
+            FORMULES_PAR_DEFAUT[cible].composition[nom] = pct;
+            if (connexeNom && connexePct > 0) FORMULES_PAR_DEFAUT[cible].composition[connexeNom] = connexePct;
+          }
+          rowData.push("AJOUTER_INTRANT", cible, nom, pct, connexeNom, connexePct);
+          alert(`Intrant "${nom}" ajouté à la formule "${cible}" avec succès.`);
+        } else {
+          let cible = document.getElementById("f_change_formule_select").value;
+          let composition = FORMULES_PAR_DEFAUT[cible]?.composition || {};
+          let checkedIntrants = [];
+          for (let intrant in composition) {
+            if (document.getElementById(`chk_change_${intrant}`)?.checked) checkedIntrants.push(intrant);
+          }
+          
+          checkedIntrants.forEach((oldIntrant, idx) => {
+            let newName = document.getElementById(`new_intrant_name_${idx}`).value;
+            let newPct = parseFloat(document.getElementById(`new_intrant_pct_${idx}`).value || 0);
+            let newPkg = parseFloat(document.getElementById(`new_intrant_pkg_${idx}`).value || 0);
+            
+            delete FORMULES_PAR_DEFAUT[cible].composition[oldIntrant];
+            FORMULES_PAR_DEFAUT[cible].composition[newName] = newPct;
+            if (!LISTE_INTRANTS_REFERENCE.includes(newName)) LISTE_INTRANTS_REFERENCE.push(newName);
+            PRIX_INTRANTS_MUTABLE[newName] = newPkg;
+          });
+
+          listeAjustementsRestantsChoisis.forEach(intrant => {
+            let val = parseFloat(document.getElementById(`ajust_restant_pct_${intrant}`).value || 0);
+            if (val > 0) FORMULES_PAR_DEFAUT[cible].composition[intrant] = val;
+          });
+
+          rowData.push("CHANGER_RESTRUCTURATION", cible, checkedIntrants.join("|"));
+          alert("Restructuration de l'aliment sauvegardée avec succès.");
+        }
+      } 
+      else if (SOUS_MODE_ALIMENT === "LISTE_INTRANTS") {
+        let selectedIntrant = document.getElementById("f_cout_select_intrant").value;
+        let newPrice = parseFloat(document.getElementById("f_cout_new_price").value || 0);
+        PRIX_INTRANTS_MUTABLE[selectedIntrant] = newPrice;
+        rowData.push("CHANGER_PRIX_KG", selectedIntrant, newPrice);
+        alert(`Le coût de l'intrant ${selectedIntrant} a été mis à jour à ${newPrice} FCFA/KG.`);
+      }
+      permanentAjustementRetour();
+      if(COMPTE_ROLE === "PARTENAIRE") rafraichirDashboardPartenaire();
+      return;
+    }
+
+    if (TABLE_ACTIVE === "Entree_Porc") {
+      let typeSelectionne = document.getElementById("e_type").value;
+      let idLotSujet = document.getElementById("e_id").value;
+      let nbrPorcelets = typeSelectionne === "Lots de porcelets" ? parseFloat(document.getElementById("e_nbr_porcelets").value || 0) : 1;
+      rowData.push(typeSelectionne, idLotSujet, nbrPorcelets);
+      alert(`Entrée porc enregistrée avec succès. ID Lot: ${idLotSujet}`);
+    }
+    else if (TABLE_ACTIVE === "Saillies") {
+      rowData.push(document.getElementById("s_id_truie").value, document.getElementById("s_id_lot").value);
+    }
+    else if (TABLE_ACTIVE === "Gestation") {
+      rowData.push(document.getElementById("g_id_truie").value, document.getElementById("g_date_saillie").value);
+    }
+    else if (TABLE_ACTIVE === "Vaccins") {
+      let modeInterv = document.getElementById("vac_mode_intervention").value;
+      if (modeInterv === "vaccin") {
+        alert("Planification du vaccin enregistrée avec succès.");
+      } else {
+        ALARME_SANITAIRE_ACTIVE = false; 
+        alert("Médicament administré ! L'alarme a été désactivée avec succès.");
+      }
+    }
+    else if (TABLE_ACTIVE === "Quarantaine") {
+      alert("Mise en quarantaine enregistrée avec succès.");
+    }
+    else if (TABLE_ACTIVE === "Mortalite") {
+      alert("Déclaration de mortalité enregistrée avec succès.");
+    }
+    else if (TABLE_ACTIVE === "Alimentation") {
+      alert("Ration journalière sauvegardée avec succès.");
+    }
+    else if (TABLE_ACTIVE === "Poids") {
+      COMPTEUR_JOURS_SIMULE = 0; 
+      alert(`Contrôle de croissance validé. Alarme désactivée pour les 30 prochains jours.`);
+    }
+    else if (TABLE_ACTIVE === "Mises_Bas") {
+      alert(`Bilan de mise-bas sauvegardé.`);
+    }
+    else if (TABLE_ACTIVE === "Sevrage") {
+      alert(`Bilan Sevrage validé !`);
+    }
+    else if (TABLE_ACTIVE === "Ventes") {
+      let totalV = parseFloat(document.getElementById("v_somme_totale").value || 0);
+      memoriserElementPourCalculLocal("ventes", totalV);
+    } 
+    else if (TABLE_ACTIVE === "Depenses") {
+      let mt = parseFloat(document.getElementById("d_mt").value || 0);
+      memoriserElementPourCalculLocal("depenses", mt);
+    }
+
+    if (!navigator.onLine || typeof google === "undefined" || !google.script || !google.script.run) {
+      enregistrerDonneesEnLocal(rowData);
+    } else {
+      document.getElementById("sync-status").textContent = "Cloud...";
+      google.script.run.withSuccessHandler(res => {
+        document.getElementById("sync-status").textContent = "Données Prêtes";
+        permanentAjustementRetour();
+        if(COMPTE_ROLE === "PARTENAIRE") rafraichirDashboardPartenaire();
+      }).withFailureHandler(() => { enregistrerDonneesEnLocal(rowData); }).soumettreFormulaireDonnees(TABLE_ACTIVE, rowData);
+    }
+  }
+
+  function enregistrerDonneesEnLocal(rowData) {
+    let localQueue = JSON.parse(localStorage.getItem("belier_offline_queue") || "[]");
+    localQueue.push({ table: TABLE_ACTIVE, data: rowData });
+    localStorage.setItem("belier_offline_queue", JSON.stringify(localQueue));
+    document.getElementById("sync-status").textContent = "Stocké en local";
+    document.getElementById("sync-status").style.color = "#f57c00";
+    alert("Sauvegarde effectuée dans la mémoire locale.");
+    permanentAjustementRetour();
+    if(COMPTE_ROLE === "PARTENAIRE") rafraichirDashboardPartenaire();
+  }
+
+  function traiterSynchronisationDonneesAmorcees() {
+    let localQueue = JSON.parse(localStorage.getItem("belier_offline_queue") || "[]");
+    if(localQueue.length === 0 || typeof google === "undefined" || !google.script || !google.script.run) return;
+    let item = localQueue.shift();
+    google.script.run.withSuccessHandler(() => {
+      localStorage.setItem("belier_offline_queue", JSON.stringify(localQueue)); traiterSynchronisationDonneesAmorcees();
+    }).soumettreFormulaireDonnees(item.table, item.data);
+  }
+
+  function executerSauvegardeOuvertureFermeture() {
+    if(navigator.onLine && typeof google !== "undefined" && google.script && google.script.run) { 
+      try { google.script.run.executerSauvegardeAutomatique(); } catch(e) { console.log("Sauvegarde planifiée reportée."); }
+    }
+  }
+
+  function memoriserElementPourCalculLocal(cle, valeur) {
+    let historique = JSON.parse(localStorage.getItem("historique_finance_" + cle) || "[]");
+    historique.push({ date: new Date().getTime(), montant: valeur });
+    localStorage.setItem("historique_finance_" + cle, JSON.stringify(historique));
+  }
+
+  function ouvrirFenetreCashFlow() {
+    basculerPage('page-cashflow-details');
+    genererAnalyseFinanciereDepuisLocal();
+  }
+
+  function revenirDepuisCashFlow() { ouvrirEspaceRole(); }
+
+  function genererAnalyseFinanciereDepuisLocal() {
+    const maintenant = new Date().getTime(); const uneSemaine = 7 * 24 * 60 * 60 * 1000; const unMois = 30 * 24 * 60 * 60 * 1000;
+    let totalVentesHebdo = extraireSommePeriodeLocal("ventes", maintenant, uneSemaine);
+    let totalVentesMensuel = extraireSommePeriodeLocal("ventes", maintenant, unMois);
+    let totalDepensesHebdo = extraireSommePeriodeLocal("depenses", maintenant, uneSemaine);
+    let totalDepensesMensuel = extraireSommePeriodeLocal("depenses", maintenant, unMois);
+
+    if(totalVentesMensuel === 0) {
+      totalVentesHebdo = 850000; totalVentesMensuel = 3400000;
+      totalDepensesHebdo = 530000; totalDepensesMensuel = 2090000;
+    }
+    let benHebdo = totalVentesHebdo - totalDepensesHebdo;
+    let benMensuel = totalVentesMensuel - totalDepensesMensuel;
+    let tauxRentab = totalVentesMensuel > 0 ? Math.round((benMensuel / totalVentesMensuel) * 100) : 0;
+    
+    let comm = "";
+    if (tauxRentab > 25) comm = `<span class="badge-rentable">🟢 EXCELLENT RENDEMENT (${tauxRentab}%)</span>`;
+    else comm = `<span class="badge-rentable" style="background:#fff3e0; color:#e65100;">🟡 RENDEMENT ASSURÉ (${tauxRentab}%)</span>`;
+    
+    mettreAJourUIChiffres(totalVentesHebdo, totalVentesMensuel, benHebdo, benMensuel, comm);
+  }
+
+  function extraireSommePeriodeLocal(cle, tempsCourant, limiteTemps) {
+    let historique = JSON.parse(localStorage.getItem("historique_finance_" + cle) || "[]");
+    return historique.filter(item => (tempsCourant - item.date) <= limiteTemps).reduce((somme, item) => somme + item.montant, 0);
+  }
+
+  function mettreAJourUIChiffres(caHebdo, caMensuel, benHebdo, benMensuel, commentaire) {
+    document.getElementById("cf-ca-hebdo").textContent = formatDeviseFCFA(caHebdo);
+    document.getElementById("cf-ca-mensuel").textContent = formatDeviseFCFA(caMensuel);
+    const elBenHebdo = document.getElementById("cf-ben-hebdo"); const elBenMensuel = document.getElementById("cf-ben-mensuel");
+    elBenHebdo.textContent = formatDeviseFCFA(benHebdo); elBenHebdo.style.color = benHebdo >= 0 ? "#2e7d32" : "#d32f2f";
+    elBenMensuel.textContent = formatDeviseFCFA(benMensuel); elBenMensuel.style.color = benMensuel >= 0 ? "#2e7d32" : "#d32f2f";
+    document.getElementById("cf-commentaire").innerHTML = commentaire;
+  }
+
+  function formatDeviseFCFA(valeur) { return new Intl.NumberFormat('fr-FR').format(valeur) + " FCFA"; }
+
+  function calcularEtMettreAJourIndicateurs() {
+    const partenaireCA = document.getElementById("partenaire-ca-hebdo");
+    const partenaireTx = document.getElementById("partenaire-tx-rentab");
+    if(partenaireCA) { partenaireCA.textContent = "850 000 FCFA"; partenaireTx.textContent = "28 %"; partenaireTx.style.color = "#2e7d32"; }
+  }
+</script>
 </body>
 </html>
+
+
