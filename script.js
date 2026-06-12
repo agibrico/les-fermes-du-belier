@@ -39,4 +39,10 @@ if ('serviceWorker' in navigator) {
       .then((reg) => console.log('Service Worker enregistré !', reg))
       .catch((err) => console.log('Erreur Service Worker', err));
   });
+  // Après une connexion réussie
+function connexionReussie(userRole) {
+    // On enregistre le rôle dans la mémoire du navigateur
+    localStorage.setItem('userRole', userRole); 
+    window.location.href = "index.html"; // Redirection
+}
 }
